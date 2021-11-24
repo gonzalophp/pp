@@ -1,0 +1,103 @@
+<html>
+    <head>
+        <style>
+            .column_4 {
+                width: 25%;
+                float: left;
+            }
+            .column_3 {
+                width: 33%;
+                float: left;
+            }
+            
+            form {
+                border: solid 1px blue;
+                display: block;
+            }
+            
+            form div.settings {
+
+                background-color: #aaddbb;
+                float: left;
+                margin: 1em 1em 1em 1em;
+            }
+            
+            form div.settings div {
+                border: solid 1px black;
+                height: auto;
+            }
+            
+            form div.buttons {
+                border: solid 1px red;
+                width: 100%;
+            }
+            
+            div.settings span {
+                height: 1.5em;
+                width: 80%;
+                text-align: right;                
+                display:inline-block;
+                box-sizing:border-box;
+                padding-right: 10px;
+                margin-top: 5px;
+                font-size: 0.9em;
+                font-family: monospace;
+            }
+
+            form input, form select {
+                width: 20%;
+                text-align: left;
+                display:inline-block;
+                box-sizing:border-box;
+                float: right;
+            }
+            
+            form input[type=submit] {
+                background-color: #4CAF50;
+                width:10em;
+                text-align: center;
+                margin: 1em 1em 1em 1em;
+                display: block;
+                border-radius: 8px;
+            }
+            
+        </style>
+    </head>
+    <body>
+        <form method="post">
+            <div class="settings">
+                <div class="column_4">
+                    <span>Years:</span><input name="years" placeholder="years" value="{{years}}"/>
+                    <span>Investment amount:</span><input name="investment_amount" placeholder="Investment amount" value="{{investment_amount}}"/>
+                    <span>Pension amount:</span><input name="pension_amount" placeholder="Pension amount" value="{{pension_amount}}"/>
+                    <span>Simulations:</span><input name="simulations" placeholder="Simulations" value="{{simulations}}"/>
+                </div>
+                <div class="column_4">
+                    <span></span>
+                    <span>Investment Monthly contribution:</span><input name="investment_monthly_contribution" placeholder="Monthly contribution" value="{{investment_monthly_contribution}}"/>
+                    <span>Pension Monthly contribution:</span><input name="pension_monthly_contribution" placeholder="Monthly contribution" value="{{pension_monthly_contribution}}"/>
+                    
+                </div>
+                <div class="column_4">
+                    <span> </span>
+                    <span>Investment rate:</span>
+                    <select name="investment_rate">
+                        {{investment_rate}}
+                    </select>
+                    <span>Pension rate:</span>
+                    <select name="pension_rate">
+                        {{pension_rate}}
+                    </select>
+                    
+                </div>
+                
+            </div>
+            <div class="buttons">
+                <input type="submit"/>
+            </div>
+        </form>
+        <div>
+            <p><img src="{{chart}}" /></p>
+        </div>
+    </body>
+</html>
