@@ -68,7 +68,8 @@ $pricesPension = $priceGenerator->getPrices(
 
 
 $chart = new Chart(900, 600);
-$formData['chart'] = 'data:image/png;base64,' . $chart->getImageDataBase64($pricesInvestment, $pricesPension);
+$formData['chart'] = 'data:image/png;base64,' . 
+        $chart->getImageDataBase64($pricesInvestment, $pricesPension);
 
 $template = new Template();
 $renderedHtml = $template->render('view.html', $formData);
