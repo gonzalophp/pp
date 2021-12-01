@@ -11,7 +11,7 @@ require_once('template.php');
 require_once('marketRate.php');
 require_once('priceGenerator.php');
 
-$markets = ['investment_rate', 'pension_rate'];
+$markets = ['investment', 'pension'];
 
 $cookiePensionPost = new Cookie('pension_data');
 
@@ -31,47 +31,27 @@ $filtered = array_filter(
 foreach ($markets as $market) {
     $options = '';
     foreach ($filtered as $csv) {
-        $selected = (isset($formData[$market]) && ($formData[$market] == $csv)) ? ' selected' : '';
+        $selected = (isset($formData[$market . '_rate']) && ($formData[$market . '_rate'] == $csv)) ? ' selected' : '';
         if ($selected) {
             $marketRates[$market] = new MarketRate($csv);
         }
         $options .= "<option$selected value=\"$csv\">$csv</option>";
     }
-    $formData[$market] = $options;
+    $formData[$market . '_rate'] = $options;
 }
 
 
 $priceGenerator = new PriceGenerator();
-
-
-$ratesInvestment = array_map(
-    fn() => $marketRates['investment_rate']->getRandomRate(), 
-    range(1, 12 * $formData['years'])
-);
-
-$pricesInvestment = $priceGenerator->getPrices(
-        $formData['investment_amount'],
-        $ratesInvestment,
-        $formData['investment_monthly_contribution']
-);
-
-$ratesPension = array_map(
-        fn() => $marketRates['pension_rate']->getRandomRate(),
-        range(1, 12 * $formData['years'])
-);
-
-$pricesPension = $priceGenerator->getPrices(
-        $formData['pension_amount'],
-        $ratesPension,
-        $formData['pension_monthly_contribution']
-);
+$sumOfMarketPrices = $priceGenerator->getSumOfPrices(
+        $marketRates, 
+        $formData['years'] * 12,
+        $formData
+        );
 
 
 $chart = new Chart(900, 600);
 $formData['chart'] = 'data:image/png;base64,' . 
-        $chart->getImageDataBase64($pricesInvestment, $pricesPension);
+        $chart->getImageDataBase64($sumOfMarketPrices);
 
 $template = new Template();
-$renderedHtml = $template->render('view.html', $formData);
-
-echo $renderedHtml;
+echo $template->render('view.html', $formData);
