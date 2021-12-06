@@ -37,12 +37,11 @@ class Chart {
                 imageline($this->image, $x1, $y1, $x2, $y2, 0x00FF00);
                 
             }
-//            var_export(['limits' => $this->limits, 'previous' => $previousValue, 'current' => $pointValues[$k]]);
             $previousValue = $pointValues[$k];
             
         }
         
-        var_export(['last-price' => number_format($previousValue, 2)]);
+//        var_export(['last-price' => number_format($previousValue, 2)]);
     }
     
     private function buildAxis(array $prices): void
@@ -83,12 +82,11 @@ class Chart {
     
     private function buildScale($min, $max): void
     {
-        echo '<br/>';var_export(['aaaaaa', 'min' => $min, 'max' => $max]);
         $diff = $max-$min;
         
         $floatSegment = $diff / 5;
         for($n=0; ($floatSegment/pow(10, $n)) > 1; $n++) {
-            echo '<br/>';var_export(['for', '$n' => $n, $floatSegment / pow(10, $n)]);
+//            echo '<br/>';var_export(['for', '$n' => $n, $floatSegment / pow(10, $n)]);
         }
         
         $finalValueBelow1 = $floatSegment / pow(10, $n);

@@ -5,7 +5,6 @@ class PriceGenerator {
     {
         $marketPrices = [];
         
-        // $markets = ['investment', 'pension'];
         foreach ($marketRates as $market => $marketRate) {
             $rates = array_map(
                     fn() => $marketRate->getRandomRate(),

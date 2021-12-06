@@ -24,8 +24,8 @@ if (!empty($_POST)) {
 
 
 $filtered = array_filter(
-        scandir('.'),
-        fn($v) => (substr($v, -3) == 'csv')
+    scandir('.'),
+    fn($v) => (substr($v, -3) == 'csv')
 );
 
 foreach ($markets as $market) {
@@ -41,17 +41,27 @@ foreach ($markets as $market) {
 }
 
 
-$priceGenerator = new PriceGenerator();
-$sumOfMarketPrices = $priceGenerator->getSumOfPrices(
-        $marketRates, 
-        $formData['years'] * 12,
-        $formData
-        );
-
-
 $chart = new Chart(900, 600);
-$formData['chart'] = 'data:image/png;base64,' . 
-        $chart->getImageDataBase64($sumOfMarketPrices);
+
+$priceGenerator = new PriceGenerator();
+$sumOfMarketPrices = [];
+
+foreach (range(1, $formData['simulations']) as $v) {
+    $sumOfMarketPrices[] = $priceGenerator->getSumOfPrices(
+            $marketRates,
+            $formData['years'] * 12,
+            $formData
+    );
+}
+
+$base64Image = $chart->getImageDataBase64(...$sumOfMarketPrices);
+
+$formData['chart'] = 'data:image/png;base64,' . $base64Image;
 
 $template = new Template();
 echo $template->render('view.html', $formData);
+
+
+$finalValues = array_column($sumOfMarketPrices, array_key_last(current($sumOfMarketPrices)));
+echo "Avg final price: " . number_format(array_sum($finalValues)/count($finalValues));
+
