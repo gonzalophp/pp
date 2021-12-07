@@ -26,6 +26,7 @@ class Chart {
     
     private function drawSequence(array $pointValues): void
     {
+        $lastValue = end($pointValues);
         $totalCount = count($pointValues);
         $maxScale = end($this->scale);
         foreach (array_keys($pointValues) as $n => $k) {
@@ -34,14 +35,12 @@ class Chart {
                 $x2 = $this->limits['drawXMin'] + (($n / ($totalCount - 1)) * ($this->limits['drawXMax'] - $this->limits['drawXMin']));
                 $y1 = $this->limits['drawYMax'] - (($this->limits['drawYMax'] - $this->limits['drawYMin']) * ($previousValue / $maxScale));
                 $y2 = $this->limits['drawYMax'] - (($this->limits['drawYMax'] - $this->limits['drawYMin']) * ($pointValues[$k] / $maxScale));
-                imageline($this->image, $x1, $y1, $x2, $y2, 0x00FF00);
+                imageline($this->image, $x1, $y1, $x2, $y2, (($lastValue > 0) ? 0x00FF00 : 0xFF0000));
                 
             }
             $previousValue = $pointValues[$k];
             
         }
-        
-//        var_export(['last-price' => number_format($previousValue, 2)]);
     }
     
     private function buildAxis(array $prices): void
@@ -85,9 +84,7 @@ class Chart {
         $diff = $max-$min;
         
         $floatSegment = $diff / 5;
-        for($n=0; ($floatSegment/pow(10, $n)) > 1; $n++) {
-//            echo '<br/>';var_export(['for', '$n' => $n, $floatSegment / pow(10, $n)]);
-        }
+        for($n=0; ($floatSegment/pow(10, $n)) > 1; $n++);
         
         $finalValueBelow1 = $floatSegment / pow(10, $n);
         foreach ([0.1, 0.2, 0.5, 1] as $v) {

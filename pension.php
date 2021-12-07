@@ -41,11 +41,8 @@ foreach ($markets as $market) {
 }
 
 
-$chart = new Chart(900, 600);
-
 $priceGenerator = new PriceGenerator();
 $sumOfMarketPrices = [];
-
 foreach (range(1, $formData['simulations']) as $v) {
     $sumOfMarketPrices[] = $priceGenerator->getSumOfPrices(
             $marketRates,
@@ -54,6 +51,7 @@ foreach (range(1, $formData['simulations']) as $v) {
     );
 }
 
+$chart = new Chart(900, 600);
 $base64Image = $chart->getImageDataBase64(...$sumOfMarketPrices);
 
 $formData['chart'] = 'data:image/png;base64,' . $base64Image;
@@ -64,4 +62,8 @@ echo $template->render('view.html', $formData);
 
 $finalValues = array_column($sumOfMarketPrices, array_key_last(current($sumOfMarketPrices)));
 echo "Avg final price: " . number_format(array_sum($finalValues)/count($finalValues));
+echo "<br/>";
 
+$finalValueNegative = array_reduce($sumOfMarketPrices, function($carry, $item) {return (end($item) < 0) ? ++$carry: $carry; }, 0);
+echo "Probability of success: " . number_format(((count($finalValues) -$finalValueNegative) / count($finalValues)) * 100) . "%";
+echo "<br/>";
