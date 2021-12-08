@@ -17,7 +17,6 @@ class PriceGenerator {
         $sumOfPrices = [];
         $marketPrices = [];
         foreach(range(0, $periods) as $period) {
-            
             foreach (array_keys($marketRates) as $market) {
                 if ($period === 0) {
                     $marketPrices[$market] = [$period => $formData[$market . '_amount']];

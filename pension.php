@@ -41,15 +41,26 @@ foreach ($markets as $market) {
 }
 
 
+$percentile = (int) $formData['remove_percentile'];
+$simulations = (int) ($formData['simulations'] / (1-(($percentile * 2)/100)));
+$simulations = (($simulations % 2) == 0) ? $simulations : ++$simulations;
+
+
 $priceGenerator = new PriceGenerator();
 $sumOfMarketPrices = [];
-foreach (range(1, $formData['simulations']) as $v) {
+foreach (range(1, $simulations) as $v) {
     $sumOfMarketPrices[] = $priceGenerator->getSumOfPrices(
             $marketRates,
             $formData['years'] * 12,
             $formData
     );
 }
+
+$lastValues = array_column($sumOfMarketPrices, array_key_last(current($sumOfMarketPrices)));
+asort($lastValues, SORT_NUMERIC);
+$lastValues = array_slice($lastValues, ($simulations-$formData['simulations'])/2, $formData['simulations']);
+
+
 
 $chart = new Chart(900, 600);
 $base64Image = $chart->getImageDataBase64(...$sumOfMarketPrices);
