@@ -82,11 +82,15 @@
                     <span> </span>
                     <span>Investment rate:</span>
                     <select name="investment_rate">
-                        {{investment_rate}}
+                        {% for rate in investment_rate_options %}
+                            <option value="{{rate.name}}" {% if rate.selected is defined and rate.selected == true %}selected{% endif %}>{{rate.name}}</option>
+                        {% endfor %}
                     </select>
                     <span>Pension rate:</span>
                     <select name="pension_rate">
-                        {{pension_rate}}
+                        {% for rate in pension_rate_options %}
+                            <option value="{{rate.name}}" {% if rate.selected is defined and rate.selected == true %}selected{% endif %}>{{rate.name}}</option>
+                        {% endfor %}
                     </select>
                     <span>Remove percentile:</span><input name="remove_percentile" placeholder="Remove percentile" value="{{remove_percentile}}"/>
                 </div>

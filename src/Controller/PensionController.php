@@ -12,7 +12,7 @@ use App\Entity\MarketRate;
 
 class PensionController extends AbstractController
 {
-
+    
     #[Route('/pension', name: 'pension_index')]
     public function index(): Response
     {
@@ -26,9 +26,9 @@ class PensionController extends AbstractController
         $formData = [
             'years' => 0,
             'investment_amount' => 0,
-            'investment_rate' => 0,
+//            'investment_rate' => 0,
             'investment_contribution_years' => 0,
-            'pension_rate' => 0,
+//            'pension_rate' => 0,
             'pension_amount' => 0,
             'pension_contribution_years' => 0,
             'simulations' => 0,
@@ -46,69 +46,72 @@ class PensionController extends AbstractController
             $formData = $cookiePensionPost->getData() ?? $formData;
         }
         
+        $csvFiles = array_filter(
+                scandir($this->getParameter('resources')['market_prices']['path']),
+                fn($v) => (substr($v, -3) == 'csv')
+        );
+
+        $markets = ['investment', 'pension'];
+        foreach ($markets as $market) {
+            $options = [];
+            foreach ($csvFiles as $csv) {
+                $selected = (isset($formData[$market . '_rate']) && ($formData[$market . '_rate'] == $csv));
+                $options[] = ['name' => $csv, 'selected' => $selected];
+            }
+            $formData[$market . '_rate_options'] = $options;
+        }
+
         $formData['chart'] = $this->getChart($formData);
         
         return $formData;
     }
     
     private function getChart($formData): string
-    {
-        $filtered = array_filter(
-                scandir('.'),
-                fn($v) => (substr($v, -3) == 'csv')
-        );
-
+    {   
         $marketRates = [];
         $markets = ['investment', 'pension'];
         foreach ($markets as $market) {
-            $options = '';
-            foreach ($filtered as $csv) {
-                $selected = (isset($formData[$market . '_rate']) && ($formData[$market . '_rate'] == $csv)) ? ' selected' : '';
-                if ($selected) {
-                    $marketRates[$market] = new MarketRate($csv);
-                }
-                $options .= "<option$selected value=\"$csv\">$csv</option>";
+            $selected = (isset($formData[$market . '_rate']));
+            if ($selected) {
+                $path = "{$this->getParameter('resources')['market_prices']['path']}/{$formData[$market . '_rate']}";
+                $marketRates[$market] = new MarketRate($path);
             }
-            $formData[$market . '_rate'] = $options;
         }
-
-
-        $percentile = (int) $formData['remove_percentile'];
-        $simulations = (int) ($formData['simulations'] / (1 - (($percentile * 2) / 100)));
-        $simulations = (($simulations % 2) == 0) ? $simulations : ++$simulations;
-
-        var_dump(['$simulations' => $simulations]);
         
-        $priceGenerator = new PriceGenerator();
         $sumOfMarketPrices = [];
-        if ($simulations > 0) {
-            foreach (range(1, $simulations) as $v) {
-                var_dump(['$v' => $v]);
-                $sumOfMarketPrices[] = $priceGenerator->getSumOfPrices(
-                        $marketRates,
-                        $formData['years'] * 12,
-                        $formData
-                );
+        
+        if ($marketRates) {
+            $percentile = (int) $formData['remove_percentile'];
+            $simulations = (int) ($formData['simulations'] / (1 - (($percentile * 2) / 100)));
+            $simulations = (($simulations % 2) == 0) ? $simulations : ++$simulations;
+
+            $priceGenerator = new PriceGenerator();
+            
+            if ($simulations > 0) {
+                foreach (range(1, $simulations) as $v) {
+                    $sumOfMarketPrices[] = $priceGenerator->getSumOfPrices(
+                            $marketRates,
+                            $formData['years'] * 12,
+                            $formData
+                    );
+                }
             }
         }
-        
-        var_dump(['$sumOfMarketPrices'=> $sumOfMarketPrices]);
-        
+
         $chart = new Chart(900, 600);
         $base64Image = $chart->getImageDataBase64(...$sumOfMarketPrices);
-        
+
         if (count($sumOfMarketPrices) > 0) {
             $finalValues = array_column($sumOfMarketPrices, array_key_last(current($sumOfMarketPrices)));
-            echo "Avg final price: " . number_format(array_sum($finalValues) / count($finalValues));
+            echo "Avg final price: " . number_format((array_sum($finalValues) / count($finalValues)), 2);
             echo "<br/>";
 
             $finalValueNegative = array_reduce($sumOfMarketPrices, function ($carry, $item) {
                 return (end($item) < 0) ? ++$carry : $carry;
             }, 0);
-            echo "Probability of success: " . number_format(((count($finalValues) - $finalValueNegative) / count($finalValues)) * 100) . "%";
+            echo "Probability of success: " . number_format(((count($finalValues) - $finalValueNegative) / count($finalValues)) * 100, 2) . "%";
             echo "<br/>";
         }
-            
 
         return 'data:image/png;base64,' . $base64Image;
     }

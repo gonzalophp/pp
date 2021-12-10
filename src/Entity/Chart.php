@@ -21,13 +21,12 @@ class Chart {
             foreach ($prices as $pointValues) {
                 $this->drawSequence($pointValues);
             }
-            ob_start();
-            imagepng($this->image);
-            $imageData = ob_get_clean();
-        } else {
-            $imageData = null;
         }
-
+            
+        ob_start();
+        imagepng($this->image);
+        $imageData = ob_get_clean();
+        
         return base64_encode($imageData);
     }
     
