@@ -96,6 +96,8 @@ class PensionController extends AbstractController
                     );
                 }
             }
+                    
+            $sumOfMarketPrices = $this->filterPercentile($sumOfMarketPrices, $simulations, $formData['simulations']);
         }
 
         $chart = new Chart(900, 600);
@@ -114,5 +116,20 @@ class PensionController extends AbstractController
         }
 
         return 'data:image/png;base64,' . $base64Image;
+    }
+    
+    private function filterPercentile($marketPrices, int $computedSimulations, int $requestedSimulations): array
+    {
+        $lastValues = array_column($marketPrices, array_key_last(current($marketPrices)));
+        asort($lastValues, SORT_NUMERIC);
+        
+        $lastValuesKeys = array_slice(array_keys($lastValues), ($computedSimulations - $requestedSimulations) / 2, $requestedSimulations);
+        $filteredMarketPrices = [];
+        
+        foreach ($lastValuesKeys as $k) {
+            $filteredMarketPrices[] = $marketPrices[$k];
+        }
+        
+        return $filteredMarketPrices;
     }
 }

@@ -109,7 +109,7 @@ class Chart {
                 $this->scale[$i] = $this->scale[$i - 1] + $secondScaleValue;
             }
         }
-
+        
         $maxScale = end($this->scale);                
         foreach ($this->scale as $yData) {
             $yDraw = $this->limits['drawYMax'] - (($this->limits['drawYMax'] - $this->limits['drawYMin']) * ($yData / $maxScale));
@@ -123,12 +123,20 @@ class Chart {
                     0xAABBCC
             );
             
+            $yScale = number_format($yData);
+            foreach (['M' => 1000000, 'K' => 1000] as $k => $v) {
+                if (($yData/$v) > 1) {
+                    $yScale = number_format($yData/$v) . $k; 
+                    break;
+                }
+            }
+            
             imagestring(
                     $this->image,
                     2,
                     $this->limits['drawXMax'] + 9,
                     $yDraw - 6,
-                    number_format($yData),
+                    $yScale,
                     0x00FF00
             );
         }
