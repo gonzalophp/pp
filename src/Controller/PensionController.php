@@ -16,7 +16,7 @@ class PensionController extends AbstractController
     #[Route('/pension', name: 'pension_index')]
     public function index(): Response
     {
-//        return new Response('aaaaaaaaaaaaa');
+//        return new Response('qqqqqqqqqq');
         
         return $this->render('@chart/view.html.twig', $this->getFormData());
     }

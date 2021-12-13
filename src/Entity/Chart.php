@@ -9,7 +9,7 @@ class Chart {
     private $scale;
 
     public function __construct(private int $width, private int $height) {
-        $this->image = imagecreatetruecolor($width, $height);
+        $this->image = \imagecreatetruecolor($width, $height);
     }
 
     public function getImageDataBase64(...$prices): string
@@ -35,12 +35,13 @@ class Chart {
         $lastValue = end($pointValues);
         $totalCount = count($pointValues);
         $maxScale = end($this->scale);
+        
         foreach (array_keys($pointValues) as $n => $k) {
             if (isset($previousValue)) {
-                $x1 = $this->limits['drawXMin'] + ((($n - 1) / ($totalCount - 1)) * ($this->limits['drawXMax'] - $this->limits['drawXMin']));
-                $x2 = $this->limits['drawXMin'] + (($n / ($totalCount - 1)) * ($this->limits['drawXMax'] - $this->limits['drawXMin']));
-                $y1 = $this->limits['drawYMax'] - (($this->limits['drawYMax'] - $this->limits['drawYMin']) * ($previousValue / $maxScale));
-                $y2 = $this->limits['drawYMax'] - (($this->limits['drawYMax'] - $this->limits['drawYMin']) * ($pointValues[$k] / $maxScale));
+                $x1 = (int) ($this->limits['drawXMin'] + ((($n - 1) / ($totalCount - 1)) * ($this->limits['drawXMax'] - $this->limits['drawXMin'])));
+                $x2 = (int) ($this->limits['drawXMin'] + (($n / ($totalCount - 1)) * ($this->limits['drawXMax'] - $this->limits['drawXMin'])));
+                $y1 = (int) ($this->limits['drawYMax'] - (($this->limits['drawYMax'] - $this->limits['drawYMin']) * ($previousValue / $maxScale)));
+                $y2 = (int) ($this->limits['drawYMax'] - (($this->limits['drawYMax'] - $this->limits['drawYMin']) * ($pointValues[$k] / $maxScale)));
                 imageline($this->image, $x1, $y1, $x2, $y2, (($lastValue > 0) ? 0x00FF00 : 0xFF0000));
                 
             }
