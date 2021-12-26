@@ -18,4 +18,5 @@ exec:
 
 rsync:
 	rsync -e 'docker exec -i' -av --exclude .git --exclude nbproject --exclude vendor --exclude var . pp:/var/www/pension/
+	docker exec pp php bin/console cache:clear
 

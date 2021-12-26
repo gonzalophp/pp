@@ -105,14 +105,26 @@ class PensionController extends AbstractController
 
         if (count($sumOfMarketPrices) > 0) {
             $finalValues = array_column($sumOfMarketPrices, array_key_last(current($sumOfMarketPrices)));
-            echo "Avg final price: " . number_format((array_sum($finalValues) / count($finalValues)), 2);
+            $initialValue = $sumOfMarketPrices[0][0];
+            $averageFinalValue = array_sum($finalValues) / count($finalValues);
+            echo "Avg final value: " . number_format($averageFinalValue, 2);
+            echo "<br/>";
+            
+            
+            
+            $periods = (count($sumOfMarketPrices[0]) - 1);
+            $interest = 12 * (pow(($averageFinalValue/$initialValue), (1/$periods)) - 1);
+            $interestRate = number_format(($interest * 100), 2);
+            echo "Start amount: {$initialValue} - Periods: {$periods} - Interest rate: {$interestRate} - Final Amount: {$averageFinalValue}";
             echo "<br/>";
 
-            $finalValueNegative = array_reduce($sumOfMarketPrices, function ($carry, $item) {
+            $finalValueNegativeCount = array_reduce($sumOfMarketPrices, function ($carry, $item) {
                 return (end($item) < 0) ? ++$carry : $carry;
             }, 0);
-            echo "Probability of success: " . number_format(((count($finalValues) - $finalValueNegative) / count($finalValues)) * 100, 2) . "%";
+            echo "Probability of success: " . number_format(((count($finalValues) - $finalValueNegativeCount) / count($finalValues)) * 100, 2) . "%";
             echo "<br/>";
+            
+            
         }
 
         return 'data:image/png;base64,' . $base64Image;
@@ -123,7 +135,8 @@ class PensionController extends AbstractController
         $lastValues = array_column($marketPrices, array_key_last(current($marketPrices)));
         asort($lastValues, SORT_NUMERIC);
         
-        $lastValuesKeys = array_slice(array_keys($lastValues), ($computedSimulations - $requestedSimulations) / 2, $requestedSimulations);
+        $offset = (int) (($computedSimulations - $requestedSimulations) / 2);
+        $lastValuesKeys = array_slice(array_keys($lastValues), $offset, $requestedSimulations);
         $filteredMarketPrices = [];
         
         foreach ($lastValuesKeys as $k) {

@@ -4,10 +4,21 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/a/sites/pension/docker/Dockerfile</file>
+            <file>file:/home/a/sites/pension/config/services.yaml</file>
             <file>file:/home/a/sites/pension/phpunit.xml.dist</file>
-            <file>file:/home/a/sites/pension/src/Entity/Chart.php</file>
+            <file>file:/home/a/sites/pension/public/a.php</file>
+            <file>file:/home/a/sites/pension/config/packages/cache.yaml</file>
             <file>file:/home/a/sites/pension/Makefile</file>
+            <file>file:/home/a/sites/pension/src/Controller/PensionController.php</file>
+            <file>file:/home/a/sites/pension/templates/chart/view.html.twig</file>
+            <file>file:/home/a/sites/pension/.dockerignore</file>
+            <file>file:/home/a/sites/pension/.env.test</file>
+            <file>file:/home/a/sites/pension/config/packages/framework.yaml</file>
+            <file>file:/home/a/sites/pension/.env</file>
+            <file>file:/home/a/sites/pension/public/index.php</file>
+            <file>file:/home/a/sites/pension/src/Entity/Chart.php</file>
             <file>file:/home/a/sites/pension/docker/apache/001-pension.conf</file>
+            <file>file:/home/a/sites/pension/config/routes.yaml</file>
         </group>
     </open-files>
 </project-private>

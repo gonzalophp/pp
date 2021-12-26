@@ -113,7 +113,7 @@ class Chart {
         
         $maxScale = end($this->scale);                
         foreach ($this->scale as $yData) {
-            $yDraw = $this->limits['drawYMax'] - (($this->limits['drawYMax'] - $this->limits['drawYMin']) * ($yData / $maxScale));
+            $yDraw = (int) ($this->limits['drawYMax'] - (($this->limits['drawYMax'] - $this->limits['drawYMin']) * ($yData / $maxScale)));
             
             imageline(
                     $this->image, 
