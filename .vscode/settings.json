@@ -1,0 +1,11 @@
+{
+    "makefile.extensionOutputFolder": "./.vscode",
+    "filewatcher.commands": [
+		{
+            "match": "\\.*$",
+            "isAsync": true,
+            "cmd": "unset DOCKER_HOST && make -C/home/a/sites/pension rsync",
+            "event": "onFileChange"
+        }
+	]
+}
