@@ -10,9 +10,10 @@ require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
 
 
 return function (array $context): Kernel {
-    // echo 'YYYYYYYYYYYYYYYYYYYYYYYwwwwwwwwqqqqqwYYYYYYYY';
+    // var_export($_SERVER);
     $context['APP_ENV'] = 'dev';
-    $context['APP_DEBUG'] = true;
+    $context['APP_DEBUG'] = false;
+    // exit;
     // var_export(['context' => $context]);
     return new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
 };

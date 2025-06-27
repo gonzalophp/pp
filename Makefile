@@ -11,7 +11,10 @@ remove: stop
 	docker rm pp ||:
 
 start: remove
-	docker run -e APP_ENV=prod -e APP_DEBUG=0 -p 15000:80 -d --name pp ${DOCKER_IMAGE} 
+	# prod
+	# docker run -e APP_ENV=prod -e APP_DEBUG=0 -p 15000:80 -d --name pp ${DOCKER_IMAGE} 
+	# dev
+	docker run -e APP_ENV=dev -e APP_DEBUG=1 -p 15000:80 -d --name pp ${DOCKER_IMAGE} 
 
 exec:
 	docker exec -it pp bash
