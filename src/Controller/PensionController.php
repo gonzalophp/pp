@@ -1,13 +1,14 @@
 <?php
 namespace App\Controller;
 
+use App\Repository\MarketGrowthRate\Adapter\StooqFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Cookie;
 use App\Entity\Chart;
 use App\Entity\PriceGenerator;
-use App\Entity\MarketRate;
+use App\Repository\MarketGrowthRateRepository;
 
 
 class PensionController extends AbstractController
@@ -16,8 +17,6 @@ class PensionController extends AbstractController
     #[Route('/pension', name: 'pension_index')]
     public function index(): Response
     {
-//        return new Response('qqqqqqqqqq');
-        
         return $this->render('@chart/view.html.twig', $this->getFormData());
     }
     
@@ -68,19 +67,19 @@ class PensionController extends AbstractController
     
     private function getChart($formData): string
     {   
-        $marketRates = [];
+        $marketGrowthRates = [];
         $markets = ['investment', 'pension'];
         foreach ($markets as $market) {
             $selected = (isset($formData[$market . '_rate']));
             if ($selected) {
                 $path = "{$this->getParameter('resources')['market_prices']['path']}/{$formData[$market . '_rate']}";
-                $marketRates[$market] = new MarketRate($path);
+                $marketGrowthRates[$market] = new MarketGrowthRateRepository(new StooqFile($path));
             }
         }
         
         $sumOfMarketPrices = [];
         
-        if ($marketRates) {
+        if ($marketGrowthRates) {
             $percentile = (int) $formData['remove_percentile'];
             $simulations = (int) ($formData['simulations'] / (1 - (($percentile * 2) / 100)));
             $simulations = (($simulations % 2) == 0) ? $simulations : ++$simulations;
@@ -90,7 +89,7 @@ class PensionController extends AbstractController
             if ($simulations > 0) {
                 foreach (range(1, $simulations) as $v) {
                     $sumOfMarketPrices[] = $priceGenerator->getSumOfPrices(
-                            $marketRates,
+                            $marketGrowthRates,
                             $formData['years'] * 12,
                             $formData
                     );

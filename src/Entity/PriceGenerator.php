@@ -2,12 +2,12 @@
 namespace App\Entity;
 
 class PriceGenerator {    
-    public function getSumOfPrices(array $marketRates, int $periods, array $formData)
+    public function getSumOfPrices(array $marketGrowthRates, int $periods, array $formData)
     {
         $rates = [];
-        foreach ($marketRates as $market => $marketRate) {
+        foreach ($marketGrowthRates as $market => $marketGrowthRate) {
             $rates[$market] = array_map(
-                fn() => $marketRate->getRandomRate(),
+                fn() => $marketGrowthRate->getRandomRate(),
                 range(0, $periods - 1)
             );
         }
@@ -18,7 +18,7 @@ class PriceGenerator {
         $sumOfPrices = [];
         $marketPrices = [];
         foreach(range(0, $periods) as $period) {
-            foreach (array_keys($marketRates) as $market) {
+            foreach (array_keys($marketGrowthRates) as $market) {
                 if ($period === 0) {
                     $marketPrices[$market] = [$period => $formData[$market . '_amount']];
                 } else {
@@ -41,18 +41,18 @@ class PriceGenerator {
             $withdraw = ($period >= $withdrawStart) ? $withdrawAmount : 0;
             if ($withdraw > 0) {
                 $totalFromMarketsSoFar = 0;
-                foreach (array_keys($marketRates) as $market) {
+                foreach (array_keys($marketGrowthRates) as $market) {
                     $totalFromMarketsSoFar += $marketPrices[$market][$period];
                 }
                 
-                foreach (array_keys($marketRates) as $market) {
+                foreach (array_keys($marketGrowthRates) as $market) {
                     $marketPrices[$market][$period] -= (int)($withdraw * ($marketPrices[$market][$period]/$totalFromMarketsSoFar));
                 }
             }
                 
             
             $sumOfPrices[$period] = 0;
-            foreach (array_keys($marketRates) as $market) {
+            foreach (array_keys($marketGrowthRates) as $market) {
                 $sumOfPrices[$period] += $marketPrices[$market][$period];
             }
         }

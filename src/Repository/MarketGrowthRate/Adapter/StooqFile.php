@@ -1,15 +1,20 @@
 <?php
-namespace App\Entity;
 
-class MarketRate {
-    private array $rateTable;
-    
-    public function __construct(private string $fileName) {
-        $this->initialize();
-    }
-    
-    private function initialize()
+namespace App\Repository\MarketGrowthRate\Adapter;
+
+class StooqFile implements MarketRateGrowthAdapterInterface
+{
+    private string $fileName;
+
+    public function __construct($source)
     {
+        $this->fileName = $source;
+    }
+
+    public function loadData() : array
+    {
+        $rateTable = [];
+
         $f = fopen($this->fileName, 'r');
         
         // Date	Open	High	Low	Close	Volume
@@ -21,14 +26,14 @@ class MarketRate {
             if (isset($previousRow)) {
                 $growth = (100*($row['Open']-$previousRow['Open']))/$previousRow['Open'];
                 $roundGrowth = round($growth, 3);
-                $this->rateTable[] = $roundGrowth;
+                $rateTable[] = $roundGrowth;
             }
 
             $previousRow = $row;
         }
-    }
-    
-    public function getRandomRate(): float {
-        return $this->rateTable[array_rand($this->rateTable)];
+
+        fclose($f);
+
+        return $rateTable;
     }
 }
