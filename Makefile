@@ -23,3 +23,10 @@ rsync:
 	rsync -e 'docker exec -i' -av --exclude .git --exclude nbproject --exclude vendor --exclude var . pp:/var/www/pension/
 	# docker exec pp php bin/console cache:clear
 
+vendor:
+	docker cp pp:/var/www/pension/vendor .	
+
+tests:
+	vendor/bin/phpunit -c tests/phpunit.xml tests
+
+.PHONY: tests
