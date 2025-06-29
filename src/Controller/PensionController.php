@@ -46,9 +46,21 @@ class PensionController extends AbstractController
         }
         
         $csvFiles = array_filter(
-                scandir($this->getParameter('resources')['market_prices']['path']),
-                fn($v) => (substr($v, -3) == 'csv')
+                scandir(
+                    $this->getParameter('resources')['market_prices']['path'],
+                    SCANDIR_SORT_ASCENDING 
+                ),
+                // fn($v) => (substr($v, -3) == 'csv')
+                function($v) {
+                    var_export(['v' => $v]);
+                    return (substr($v, -3) == 'csv');
+                } 
         );
+
+        var_export([
+            'csvFiles' => $csvFiles
+        ]);
+        exit;
 
         $markets = ['investment', 'pension'];
         foreach ($markets as $market) {

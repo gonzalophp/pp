@@ -21,7 +21,10 @@ class StooqFile implements MarketRateGrowthAdapterInterface
         $headers = fgetcsv($f);
         
         while ($row = fgetcsv($f)) {
-            $row = array_combine($headers, array_pad($row, count($headers), 0));
+            $row = array_combine(
+                $headers, 
+                array_pad($row, count($headers), 0)
+            );
 
             if (isset($previousRow)) {
                 $growth = (100*($row['Open']-$previousRow['Open']))/$previousRow['Open'];
