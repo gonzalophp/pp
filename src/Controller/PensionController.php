@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use App\Helper\FileSearch;
 use App\Repository\MarketGrowthRate\Adapter\StooqFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -10,9 +11,14 @@ use App\Entity\Chart;
 use App\Entity\PriceGenerator;
 use App\Repository\MarketGrowthRateRepository;
 
+use function Symfony\Component\DependencyInjection\Loader\Configurator\iterator;
 
 class PensionController extends AbstractController
 {
+    public function __construct(private FileSearch $fileSearch)
+    {
+
+    }
     
     #[Route('/pension', name: 'pension_index')]
     public function index(): Response
@@ -44,23 +50,13 @@ class PensionController extends AbstractController
         } else {
             $formData = $cookiePensionPost->getData() ?? $formData;
         }
-        
-        $csvFiles = array_filter(
-                scandir(
-                    $this->getParameter('resources')['market_prices']['path'],
-                    SCANDIR_SORT_ASCENDING 
-                ),
-                // fn($v) => (substr($v, -3) == 'csv')
-                function($v) {
-                    var_export(['v' => $v]);
-                    return (substr($v, -3) == 'csv');
-                } 
+
+        $csvFiles = $this->fileSearch->getRecursive(
+            $this->getParameter('resources')['market_prices']['path'],
+            '*.csv'
         );
 
-        var_export([
-            'csvFiles' => $csvFiles
-        ]);
-        exit;
+        $csvFiles = iterator_to_array($csvFiles);
 
         $markets = ['investment', 'pension'];
         foreach ($markets as $market) {

@@ -2,35 +2,88 @@
 
 namespace App\Helper;
 
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+
 class FileSearch
 {
-    public function get(string $path, string $filter, bool $returnAbsolutePath = true) :array 
+    public function get(string $directoryPath, string $fileNamePattern) :array 
     {
-        $pattern = '/' . str_replace(
-            ['.', '*', '?'],
-            ['\.', '.*', '.'],
-            $filter
-        ) . '/';
+        $directoryPath = rtrim($directoryPath, DIRECTORY_SEPARATOR) . 
+            DIRECTORY_SEPARATOR;
 
-        var_export(['$pattern' => $pattern]);
-        echo "\n\n";
+        $fileNameRegexPattern = $this->getFilePattern($fileNamePattern);
 
-        $csvFiles = array_filter(
-            scandir(
-                $path,
-                SCANDIR_SORT_ASCENDING
-            ),
-            function($v) use ($pattern) {
-                var_export(['v' => $v]);
-                return preg_match($pattern, $v);                    
-            } 
+        $directoryIterator = new \DirectoryIterator(
+            $directoryPath
         );
 
-        $csvFiles = array_values($csvFiles);
-        $csvFiles = array_map(fn($v) => ($path . $v), $csvFiles);
+        $regexIterator = new \RegexIterator(
+            $directoryIterator, 
+            $fileNameRegexPattern,
+            \RegexIterator::GET_MATCH
+        );
 
-        var_export(['$csvFiles' => $csvFiles]);
+        $fileNames = [];
+        foreach ($regexIterator as $matches) {
+            foreach ($matches as $match) {
+                $fileNames[] = $match;
+            }
+        }
 
-        return $csvFiles;
+        sort($fileNames);
+
+        return $fileNames;
+    }
+
+    public function getRecursive(string $directoryPath, string $fileNamePattern): \Generator
+    {
+        $directoryPath = rtrim($directoryPath, DIRECTORY_SEPARATOR) . 
+            DIRECTORY_SEPARATOR;
+
+        $fileNameRegexPattern = $this->getFilePattern($directoryPath . $fileNamePattern);
+
+        $recursiveDirectoryIterator = new \RecursiveDirectoryIterator(
+            $directoryPath
+        );
+
+        $recursiveIteratorIterator = new \RecursiveIteratorIterator(
+            $recursiveDirectoryIterator
+        );
+
+        $regexIterator = new \RegexIterator(
+            $recursiveIteratorIterator, 
+            $fileNameRegexPattern,
+            \RegexIterator::GET_MATCH
+        );
+
+        $absoluteFileNames = [];
+        foreach ($regexIterator as $matches) {
+            foreach ($matches as $match) {
+                $absoluteFileNames[] = $match;
+            }
+        }
+
+        sort($absoluteFileNames);
+        $relativeFileNames = array_map(
+            fn($v) => str_replace($directoryPath, '',$v), 
+            $absoluteFileNames
+        );
+
+        yield from $relativeFileNames;
+    }    
+
+    private function getFilePattern(string $fileNamePattern) : string
+    {
+        $fileNameRegexPattern = 
+            '/^' . 
+            str_replace(
+                ['/', '.', '*', '?'],
+                ['\/', '\.', '.*', '.'],
+                $fileNamePattern
+            ) . 
+            '$/';
+
+        return $fileNameRegexPattern;
     }
 }
