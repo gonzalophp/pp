@@ -143,18 +143,23 @@ class PensionController extends AbstractController
     private function filterPercentile($marketPrices, int $computedSimulations, int $requestedSimulations): array
     {
         $filteredMarketPrices = [];
-        if (!empty($marketPrices)) {
-            $lastValues = array_column($marketPrices, array_key_last(current($marketPrices)));
-            asort($lastValues, SORT_NUMERIC);
-            
-            $offset = (int) (($computedSimulations - $requestedSimulations) / 2);
-            $lastValuesKeys = array_slice(array_keys($lastValues), $offset, $requestedSimulations);
-            
-            foreach ($lastValuesKeys as $k) {
-                $filteredMarketPrices[] = $marketPrices[$k];
-            }
+        if (empty($marketPrices)) {
+            return $filteredMarketPrices;
         }
         
+        $lastValues = array_column(
+            $marketPrices, 
+            array_key_last(current($marketPrices))
+        );
+        asort($lastValues, SORT_NUMERIC);
+        
+        $offset = (int) (($computedSimulations - $requestedSimulations) / 2);
+        $lastValuesKeys = array_slice(array_keys($lastValues), $offset, $requestedSimulations);
+        
+        foreach ($lastValuesKeys as $k) {
+            $filteredMarketPrices[] = $marketPrices[$k];
+        }
+
         return $filteredMarketPrices;
     }
 }

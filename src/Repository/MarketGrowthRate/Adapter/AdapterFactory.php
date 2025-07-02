@@ -22,7 +22,8 @@ class AdapterFactory
                 $adapter = new StooqFile($path);
                 break;
             default:
-                throw new \Exception("No adapter defined for formDataMarketRate: {$formDataMarketRate}");
+                $adapter = new UnhandledFile($path);
+                break;
         }
 
         return $adapter;

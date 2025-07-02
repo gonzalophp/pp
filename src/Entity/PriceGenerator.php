@@ -1,6 +1,7 @@
 <?php
 namespace App\Entity;
 
+use App\Repository\MarketGrowthRate\Adapter\UnhandledFile;
 use App\Repository\MarketGrowthRateRepository;
 
 class PriceGenerator {
@@ -12,10 +13,9 @@ class PriceGenerator {
     public function getSumOfPrices(array $marketGrowthRates, int $periods, array $formData)
     {
         $rates = [];
-        foreach ($marketGrowthRates as $market => $marketGrowthRate) {
-            
+        foreach ($marketGrowthRates as $market => $marketGrowthRateRepository) {
             $rates[$market] = array_map(
-                fn() => $marketGrowthRate->getRandomRate(),
+                fn() => $marketGrowthRateRepository->getRandomRate(),
                 range(0, $periods - 1)
             );
         }
