@@ -2,20 +2,23 @@
 namespace App\Controller;
 
 use App\Helper\FileSearch;
-use App\Repository\MarketGrowthRate\Adapter\StooqFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Cookie;
 use App\Entity\Chart;
 use App\Entity\PriceGenerator;
+use App\Repository\MarketGrowthRate\Adapter\AdapterFactory;
 use App\Repository\MarketGrowthRateRepository;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\iterator;
 
 class PensionController extends AbstractController
 {
-    public function __construct(private FileSearch $fileSearch)
+    public function __construct(
+        private FileSearch $fileSearch,
+        private AdapterFactory $adapterFactory
+        )
     {
 
     }
@@ -80,8 +83,8 @@ class PensionController extends AbstractController
         foreach ($markets as $market) {
             $selected = (isset($formData[$market . '_rate']));
             if ($selected) {
-                $path = "{$this->getParameter('resources')['market_prices']['path']}/{$formData[$market . '_rate']}";
-                $marketGrowthRates[$market] = new MarketGrowthRateRepository(new StooqFile($path));
+                $marketRateGrowthAdapter = $this->adapterFactory->getAdapter($formData[$market . '_rate']);
+                $marketGrowthRates[$market] = new MarketGrowthRateRepository($marketRateGrowthAdapter);
             }
         }
         
@@ -139,15 +142,17 @@ class PensionController extends AbstractController
     
     private function filterPercentile($marketPrices, int $computedSimulations, int $requestedSimulations): array
     {
-        $lastValues = array_column($marketPrices, array_key_last(current($marketPrices)));
-        asort($lastValues, SORT_NUMERIC);
-        
-        $offset = (int) (($computedSimulations - $requestedSimulations) / 2);
-        $lastValuesKeys = array_slice(array_keys($lastValues), $offset, $requestedSimulations);
         $filteredMarketPrices = [];
-        
-        foreach ($lastValuesKeys as $k) {
-            $filteredMarketPrices[] = $marketPrices[$k];
+        if (!empty($marketPrices)) {
+            $lastValues = array_column($marketPrices, array_key_last(current($marketPrices)));
+            asort($lastValues, SORT_NUMERIC);
+            
+            $offset = (int) (($computedSimulations - $requestedSimulations) / 2);
+            $lastValuesKeys = array_slice(array_keys($lastValues), $offset, $requestedSimulations);
+            
+            foreach ($lastValuesKeys as $k) {
+                $filteredMarketPrices[] = $marketPrices[$k];
+            }
         }
         
         return $filteredMarketPrices;
