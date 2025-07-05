@@ -1,7 +1,7 @@
 <?php
 namespace App\Tests\Entity;
 
-use App\Entity\Chart;
+use App\Service\Chart;
 use PHPUnit\Framework\TestCase;
 
 class ChartTest extends TestCase
@@ -13,8 +13,8 @@ class ChartTest extends TestCase
 
     public function FunctionName() :void
     {
-        $chart = new Chart(300, 200);
-        $chart->getImageDataBase64();
+        $chart = new Chart();
+        $chart->getImageDataBase64(300, 200);
     }
 
 }

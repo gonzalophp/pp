@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Cookie;
-use App\Entity\Chart;
+use App\Service\Chart;
 use App\Entity\PriceGenerator;
 use App\Repository\MarketGrowthRate\Adapter\AdapterFactory;
 use App\Repository\MarketGrowthRateRepository;
@@ -17,7 +17,8 @@ class PensionController extends AbstractController
 {
     public function __construct(
         private FileSearch $fileSearch,
-        private AdapterFactory $adapterFactory
+        private AdapterFactory $adapterFactory,
+        private Chart $chart
         )
     {
 
@@ -110,8 +111,7 @@ class PensionController extends AbstractController
             $sumOfMarketPrices = $this->filterPercentile($sumOfMarketPrices, $simulations, $formData['simulations']);
         }
 
-        $chart = new Chart(900, 600);
-        $base64Image = $chart->getImageDataBase64(...$sumOfMarketPrices);
+        $base64Image = $this->chart->getImageDataBase64(900, 600, ...$sumOfMarketPrices);
 
         if (count($sumOfMarketPrices) > 0) {
             $finalValues = array_column($sumOfMarketPrices, array_key_last(current($sumOfMarketPrices)));
@@ -151,6 +151,7 @@ class PensionController extends AbstractController
             $marketPrices, 
             array_key_last(current($marketPrices))
         );
+
         asort($lastValues, SORT_NUMERIC);
         
         $offset = (int) (($computedSimulations - $requestedSimulations) / 2);

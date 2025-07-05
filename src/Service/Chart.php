@@ -1,21 +1,26 @@
 <?php
 
-namespace App\Entity;
+namespace App\Service;
 
+use App\Helper\ScaleGenerator;
 
 class Chart {
     private \GdImage $image;
     private $limits;
     private $scale;
 
-    public function __construct(private int $width, private int $height) {
-        $this->image = \imagecreatetruecolor($width, $height);
+    public function __construct(private ScaleGenerator $scaleGenerator) {
     }
-
-    public function getImageDataBase64(...$prices): string
+    
+    public function getImageDataBase64(int $width, int $height, ...$prices): string
     {
+        $this->image = \imagecreatetruecolor($width, $height);
         if (count($prices) > 0) {
-            $this->buildAxis($prices);
+            $this->buildAxis($width, $height, $prices);
+            $this->scale = $this->scaleGenerator->getScale(
+                $this->limits['dataYMin'], 
+                $this->limits['dataYMax']
+            );
             $this->buildScale($this->limits['dataYMin'], $this->limits['dataYMax']);
 
             foreach ($prices as $pointValues) {
@@ -50,7 +55,7 @@ class Chart {
         }
     }
     
-    private function buildAxis(array $prices): void
+    private function buildAxis(int $width, int $height, array $prices): void
     {
         $this->limits['dataXMin'] = 0;
         
@@ -71,10 +76,10 @@ class Chart {
             }
         }
         
-        $this->limits['drawXMin'] = $this->width * 0.08;
-        $this->limits['drawXMax'] = $this->width * 0.92;
-        $this->limits['drawYMin'] = $this->height * 0.05;
-        $this->limits['drawYMax'] = $this->height * 0.95;
+        $this->limits['drawXMin'] = $width * 0.08;
+        $this->limits['drawXMax'] = $width * 0.92;
+        $this->limits['drawYMin'] = $height * 0.05;
+        $this->limits['drawYMax'] = $height * 0.95;
         
         imagerectangle(
             $this->image, 
@@ -86,31 +91,8 @@ class Chart {
         );
     }
     
-    private function buildScale($min, $max): void
+    private function buildScale(): void
     {
-        $diff = $max-$min;
-        
-        $floatSegment = $diff / 5;
-        for($n=0; ($floatSegment/pow(10, $n)) > 1; $n++);
-        
-        $finalValueBelow1 = $floatSegment / pow(10, $n);
-        foreach ([0.1, 0.2, 0.5, 1] as $v) {
-            if ($v > $finalValueBelow1) {
-                $secondScaleValue = (int) ($v * pow(10, $n));
-                break;
-            }
-        }
-        
-        for($i=0; ($this->scale[$i - 1] ?? 0) < $max; $i++) {
-            if ($i===0) {
-                $this->scale[$i] = 0;
-            } elseif ($i===1) {
-                $this->scale[$i] = $secondScaleValue;
-            } else {
-                $this->scale[$i] = $this->scale[$i - 1] + $secondScaleValue;
-            }
-        }
-        
         $maxScale = end($this->scale);                
         foreach ($this->scale as $yData) {
             $yDraw = (int) ($this->limits['drawYMax'] - (($this->limits['drawYMax'] - $this->limits['drawYMin']) * ($yData / $maxScale)));
@@ -126,7 +108,7 @@ class Chart {
             
             $yScale = number_format($yData);
             foreach (['M' => 1000000, 'K' => 1000] as $k => $v) {
-                if (($yData/$v) > 1) {
+                if (abs($yData/$v) > 1) {
                     $yScale = number_format($yData/$v) . $k; 
                     break;
                 }
