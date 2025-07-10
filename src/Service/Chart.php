@@ -12,16 +12,17 @@ class Chart {
     public function __construct(private ScaleGenerator $scaleGenerator) {
     }
     
-    public function getImageDataBase64(int $width, int $height, ...$prices): string
+    public function getImageDataBase64(int $pixelsWidth, int $pixelsHeight, array $prices): string
     {
-        $this->image = \imagecreatetruecolor($width, $height);
+        $this->image = \imagecreatetruecolor($pixelsWidth, $pixelsHeight);
         if (count($prices) > 0) {
-            $this->buildAxis($width, $height, $prices);
+            $this->createChartLimits($pixelsWidth, $pixelsHeight, $prices);
+            $this->drawChartAxis();
             $this->scale = $this->scaleGenerator->getScale(
                 $this->limits['dataYMin'], 
                 $this->limits['dataYMax']
             );
-            $this->buildScale($this->limits['dataYMin'], $this->limits['dataYMax']);
+            $this->buildScale();
 
             foreach ($prices as $pointValues) {
                 $this->drawSequence($pointValues);
@@ -48,14 +49,13 @@ class Chart {
                 $y1 = (int) ($this->limits['drawYMax'] - (($this->limits['drawYMax'] - $this->limits['drawYMin']) * ($previousValue / $maxScale)));
                 $y2 = (int) ($this->limits['drawYMax'] - (($this->limits['drawYMax'] - $this->limits['drawYMin']) * ($pointValues[$k] / $maxScale)));
                 imageline($this->image, $x1, $y1, $x2, $y2, (($lastValue > 0) ? 0x00FF00 : 0xFF0000));
-                
             }
             $previousValue = $pointValues[$k];
             
         }
     }
-    
-    private function buildAxis(int $width, int $height, array $prices): void
+
+    private function createChartLimits(int $width, int $height, array $prices): void
     {
         $this->limits['dataXMin'] = 0;
         
@@ -80,7 +80,10 @@ class Chart {
         $this->limits['drawXMax'] = $width * 0.92;
         $this->limits['drawYMin'] = $height * 0.05;
         $this->limits['drawYMax'] = $height * 0.95;
-        
+    }
+    
+    private function drawChartAxis(): void
+    {
         imagerectangle(
             $this->image, 
             $this->limits['drawXMin'],

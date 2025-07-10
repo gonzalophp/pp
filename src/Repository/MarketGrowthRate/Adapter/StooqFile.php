@@ -18,9 +18,9 @@ class StooqFile implements MarketRateGrowthAdapterInterface
         $f = fopen($this->fileName, 'r');
         
         // Date	Open	High	Low	Close	Volume
-        $headers = fgetcsv($f);
+        $headers = fgetcsv(stream: $f, escape: "\\");
         
-        while ($row = fgetcsv($f)) {
+        while ($row = fgetcsv(stream: $f, escape: "\\")) {
             $row = array_combine(
                 $headers, 
                 array_pad($row, count($headers), 0)

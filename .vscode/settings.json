@@ -7,5 +7,6 @@
             "cmd": "unset DOCKER_HOST && make -C/home/a/sites/pension rsync",
             "event": "onFileChange"
         }
-	]
+  ],
+  "makefile.configureOnOpen": true
 }

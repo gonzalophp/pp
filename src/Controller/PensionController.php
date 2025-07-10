@@ -73,12 +73,38 @@ class PensionController extends AbstractController
         }
 
         $formData['chart'] = $this->getChart($formData);
+
+        // $sumOfMarketPrices  = [];
+
+        // if (count($sumOfMarketPrices) > 0) {
+        //     $finalValues = array_column($sumOfMarketPrices, array_key_last(current($sumOfMarketPrices)));
+        //     $initialValue = $sumOfMarketPrices[0][0];
+        //     $averageFinalValue = array_sum($finalValues) / count($finalValues);
+        //     echo "Avg final value: " . number_format($averageFinalValue, 2);
+        //     echo "<br/>";
+            
+            
+            
+        //     $periods = (count($sumOfMarketPrices[0]) - 1);
+        //     $interest = 12 * (pow(($averageFinalValue/$initialValue), (1/$periods)) - 1);
+        //     $interestRate = number_format(($interest * 100), 2);
+        //     echo "Start amount: {$initialValue} - Periods: {$periods} - Interest rate: {$interestRate} - Final Amount: {$averageFinalValue}";
+        //     echo "<br/>";
+
+        //     $finalValueNegativeCount = array_reduce($sumOfMarketPrices, function ($carry, $item) {
+        //         return (end($item) < 0) ? ++$carry : $carry;
+        //     }, 0);
+        //     echo "Probability of success: " . number_format(((count($finalValues) - $finalValueNegativeCount) / count($finalValues)) * 100, 2) . "%";
+        //     echo "<br/>";
+        // }
         
         return $formData;
     }
     
     private function getChart($formData): string
     {   
+
+        var_export(['$formData' => $formData]);
         $marketGrowthRates = [];
         $markets = ['investment', 'pension'];
         foreach ($markets as $market) {
@@ -111,7 +137,7 @@ class PensionController extends AbstractController
             $sumOfMarketPrices = $this->filterPercentile($sumOfMarketPrices, $simulations, $formData['simulations']);
         }
 
-        $base64Image = $this->chart->getImageDataBase64(900, 600, ...$sumOfMarketPrices);
+        $base64Image = $this->chart->getImageDataBase64(900, 600, $sumOfMarketPrices);
 
         if (count($sumOfMarketPrices) > 0) {
             $finalValues = array_column($sumOfMarketPrices, array_key_last(current($sumOfMarketPrices)));
@@ -133,8 +159,6 @@ class PensionController extends AbstractController
             }, 0);
             echo "Probability of success: " . number_format(((count($finalValues) - $finalValueNegativeCount) / count($finalValues)) * 100, 2) . "%";
             echo "<br/>";
-            
-            
         }
 
         return 'data:image/png;base64,' . $base64Image;

@@ -1,19 +1,15 @@
 <?php
-namespace App\Tests\Entity;
+namespace App\Tests\Service;
 
+use App\Helper\ScaleGenerator;
 use App\Service\Chart;
 use PHPUnit\Framework\TestCase;
 
 class ChartTest extends TestCase
 {
-    public function testOne(): void
-    {
-        $this->assertEquals(1,1,);
-    }
-
     public function FunctionName() :void
     {
-        $chart = new Chart();
+        $chart = new Chart(new ScaleGenerator());
         $chart->getImageDataBase64(300, 200);
     }
 

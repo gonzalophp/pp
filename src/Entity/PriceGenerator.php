@@ -1,7 +1,6 @@
 <?php
 namespace App\Entity;
 
-use App\Repository\MarketGrowthRate\Adapter\UnhandledFile;
 use App\Repository\MarketGrowthRateRepository;
 
 class PriceGenerator {
