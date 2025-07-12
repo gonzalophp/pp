@@ -13,12 +13,12 @@ class AdapterFactory
         
     }
 
-    public function getAdapter(string $formDataMarketRate): MarketRateGrowthAdapterInterface
+    public function getAdapter(string $formDataMarketRateSource): MarketRateGrowthAdapterInterface
     {
-        $path = "{$this->parameterBag->get('resources')['market_prices']['path']}/{$formDataMarketRate}";
+        $path = "{$this->parameterBag->get('resources')['market_prices']['path']}/{$formDataMarketRateSource}";
 
         switch (true) {
-            case (strpos($formDataMarketRate, 'Stooq') !== false) :
+            case (strpos($formDataMarketRateSource, 'Stooq') !== false) :
                 $adapter = new StooqFile($path);
                 break;
             default:

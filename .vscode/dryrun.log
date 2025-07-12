@@ -1,5 +1,0 @@
-make --dry-run --always-make --keep-going --print-directory
-make: Entering directory '/home/a/sites/pension'
-docker build --compress -t gonzalophp/pp -f docker/Dockerfile .
-make: Leaving directory '/home/a/sites/pension'
- 

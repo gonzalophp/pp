@@ -15,6 +15,8 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\iterator;
 
 class PensionController extends AbstractController
 {
+    private const COOKIE_NAME = 'pension_data';
+
     public function __construct(
         private FileSearch $fileSearch,
         private AdapterFactory $adapterFactory,
@@ -27,33 +29,16 @@ class PensionController extends AbstractController
     #[Route('/pension', name: 'pension_index')]
     public function index(): Response
     {
-        return $this->render('@chart/view.html.twig', $this->getFormData());
+
+        return $this->render(
+            '@chart/view.html.twig', 
+            $this->getFormData()
+        );
     }
     
     private function getFormData(): array
     {
-        $formData = [
-            'years' => 0,
-            'investment_amount' => 0,
-//            'investment_rate' => 0,
-            'investment_contribution_years' => 0,
-//            'pension_rate' => 0,
-            'pension_amount' => 0,
-            'pension_contribution_years' => 0,
-            'simulations' => 0,
-            'remove_percentile' => 0,
-            'investment_monthly_contribution' => 0,
-            'pension_monthly_contribution' => 0,
-            'withdraw_amount' => 0,
-            'withdraw_year' => 0
-        ];
-        $cookiePensionPost = new Cookie('pension_data');
-        if (!empty($_POST)) {
-            $formData = array_merge($formData, $_POST);
-            $cookiePensionPost->store($formData);
-        } else {
-            $formData = $cookiePensionPost->getData() ?? $formData;
-        }
+        $formData = $this->getFormDataMergedWithCookieData();
 
         $csvFiles = $this->fileSearch->getRecursive(
             $this->getParameter('resources')['market_prices']['path'],
@@ -65,59 +50,67 @@ class PensionController extends AbstractController
         $markets = ['investment', 'pension'];
         foreach ($markets as $market) {
             $options = [];
-            foreach ($csvFiles as $csv) {
-                $selected = (isset($formData[$market . '_rate']) && ($formData[$market . '_rate'] == $csv));
-                $options[] = ['name' => $csv, 'selected' => $selected];
+            foreach ($csvFiles as $csvFile) {
+                $selected = (isset($formData[$market . '_rate']) && ($formData[$market . '_rate'] == $csvFile));
+                $options[] = [
+                    'name' => $csvFile, 
+                    'selected' => $selected
+                ];
             }
             $formData[$market . '_rate_options'] = $options;
         }
+        
+        $marketGrowthRatesRepositories = $this->getMarketGrowthRepositories($markets, $formData);
+        $sumOfMarketPrices = $this->getSumOfMarketPrices(
+            $marketGrowthRatesRepositories, 
+            $formData
+        );
+        $formData['chart'] = 'data:image/png;base64,' . $this->chart->getImageDataBase64(900, 600, $sumOfMarketPrices);
 
-        $formData['chart'] = $this->getChart($formData);
-
-        // $sumOfMarketPrices  = [];
-
-        // if (count($sumOfMarketPrices) > 0) {
-        //     $finalValues = array_column($sumOfMarketPrices, array_key_last(current($sumOfMarketPrices)));
-        //     $initialValue = $sumOfMarketPrices[0][0];
-        //     $averageFinalValue = array_sum($finalValues) / count($finalValues);
-        //     echo "Avg final value: " . number_format($averageFinalValue, 2);
-        //     echo "<br/>";
+        if (count($sumOfMarketPrices) > 0) {
+            $finalValues = array_column($sumOfMarketPrices, array_key_last(current($sumOfMarketPrices)));
+            $initialValue = $sumOfMarketPrices[0][0];
+            $averageFinalValue = array_sum($finalValues) / count($finalValues);           
             
             
-            
-        //     $periods = (count($sumOfMarketPrices[0]) - 1);
-        //     $interest = 12 * (pow(($averageFinalValue/$initialValue), (1/$periods)) - 1);
-        //     $interestRate = number_format(($interest * 100), 2);
-        //     echo "Start amount: {$initialValue} - Periods: {$periods} - Interest rate: {$interestRate} - Final Amount: {$averageFinalValue}";
-        //     echo "<br/>";
+            $periods = (count($sumOfMarketPrices[0]) - 1);
+            $interest = 12 * (pow(($averageFinalValue/$initialValue), (1/$periods)) - 1);
+            $interestRate = number_format(($interest * 100), 2);
 
-        //     $finalValueNegativeCount = array_reduce($sumOfMarketPrices, function ($carry, $item) {
-        //         return (end($item) < 0) ? ++$carry : $carry;
-        //     }, 0);
-        //     echo "Probability of success: " . number_format(((count($finalValues) - $finalValueNegativeCount) / count($finalValues)) * 100, 2) . "%";
-        //     echo "<br/>";
-        // }
+            $finalValueNegativeCount = array_reduce($sumOfMarketPrices, function ($carry, $item) {
+                return (end($item) < 0) ? ++$carry : $carry;
+            }, 0);
+
+            $statsProbabilitySuccess = number_format(((count($finalValues) - $finalValueNegativeCount) / count($finalValues)) * 100, 2);
+            
+            $formData['stats_amount_start'] = $sumOfMarketPrices[0][0];
+            $formData['stats_amount_end'] = $averageFinalValue;
+            $formData['stats_periods'] = $periods;
+            $formData['stats_rate'] = $interestRate;
+            $formData['stats_probability_success'] = $statsProbabilitySuccess;
+        }
         
         return $formData;
     }
-    
-    private function getChart($formData): string
-    {   
 
-        var_export(['$formData' => $formData]);
-        $marketGrowthRates = [];
-        $markets = ['investment', 'pension'];
+    private function getMarketGrowthRepositories(array $markets, array $formData): array {
+        $marketGrowthRatesRepositories = [];
         foreach ($markets as $market) {
-            $selected = (isset($formData[$market . '_rate']));
-            if ($selected) {
-                $marketRateGrowthAdapter = $this->adapterFactory->getAdapter($formData[$market . '_rate']);
-                $marketGrowthRates[$market] = new MarketGrowthRateRepository($marketRateGrowthAdapter);
+            if (isset($formData[$market . '_rate'])) {
+                $marketRateGrowthAdapter = $this->adapterFactory
+                    ->getAdapter($formData[$market . '_rate']);
+                $marketGrowthRatesRepositories[$market] = new MarketGrowthRateRepository($marketRateGrowthAdapter);
             }
         }
-        
+
+        return $marketGrowthRatesRepositories;
+    }
+    
+    private function getSumOfMarketPrices(array $marketGrowthRatesRepositories, $formData): array
+    {   
         $sumOfMarketPrices = [];
         
-        if ($marketGrowthRates) {
+        if ($marketGrowthRatesRepositories) {
             $percentile = (int) $formData['remove_percentile'];
             $simulations = (int) ($formData['simulations'] / (1 - (($percentile * 2) / 100)));
             $simulations = (($simulations % 2) == 0) ? $simulations : ++$simulations;
@@ -127,7 +120,7 @@ class PensionController extends AbstractController
             if ($simulations > 0) {
                 foreach (range(1, $simulations) as $v) {
                     $sumOfMarketPrices[] = $priceGenerator->getSumOfPrices(
-                            $marketGrowthRates,
+                            $marketGrowthRatesRepositories,
                             $formData['years'] * 12,
                             $formData
                     );
@@ -137,31 +130,7 @@ class PensionController extends AbstractController
             $sumOfMarketPrices = $this->filterPercentile($sumOfMarketPrices, $simulations, $formData['simulations']);
         }
 
-        $base64Image = $this->chart->getImageDataBase64(900, 600, $sumOfMarketPrices);
-
-        if (count($sumOfMarketPrices) > 0) {
-            $finalValues = array_column($sumOfMarketPrices, array_key_last(current($sumOfMarketPrices)));
-            $initialValue = $sumOfMarketPrices[0][0];
-            $averageFinalValue = array_sum($finalValues) / count($finalValues);
-            echo "Avg final value: " . number_format($averageFinalValue, 2);
-            echo "<br/>";
-            
-            
-            
-            $periods = (count($sumOfMarketPrices[0]) - 1);
-            $interest = 12 * (pow(($averageFinalValue/$initialValue), (1/$periods)) - 1);
-            $interestRate = number_format(($interest * 100), 2);
-            echo "Start amount: {$initialValue} - Periods: {$periods} - Interest rate: {$interestRate} - Final Amount: {$averageFinalValue}";
-            echo "<br/>";
-
-            $finalValueNegativeCount = array_reduce($sumOfMarketPrices, function ($carry, $item) {
-                return (end($item) < 0) ? ++$carry : $carry;
-            }, 0);
-            echo "Probability of success: " . number_format(((count($finalValues) - $finalValueNegativeCount) / count($finalValues)) * 100, 2) . "%";
-            echo "<br/>";
-        }
-
-        return 'data:image/png;base64,' . $base64Image;
+        return $sumOfMarketPrices;
     }
     
     private function filterPercentile($marketPrices, int $computedSimulations, int $requestedSimulations): array
@@ -186,5 +155,49 @@ class PensionController extends AbstractController
         }
 
         return $filteredMarketPrices;
+    }
+
+    private function getInitializedFormData() : array {
+        $initializedFormData = [
+            'years' => 0,
+            
+            //            'investment_rate' => 0,
+            'investment_amount' => 0,
+            'investment_contribution_years' => 0,
+            'investment_monthly_contribution' => 0,
+
+            //            'pension_rate' => 0,
+            'pension_amount' => 0,
+            'pension_contribution_years' => 0,
+            'pension_monthly_contribution' => 0,
+
+            'simulations' => 0,
+            'remove_percentile' => 0,
+            'withdraw_amount' => 0,
+            'withdraw_year' => 0,
+
+            'stats_amount_start' => 0,
+            'stats_amount_end' => 0,
+            'stats_periods' => 0,
+            'stats_rate' => 0,
+            'stats_probability_success' => 0,
+        ];
+
+        return $initializedFormData;
+    }
+
+    private function getFormDataMergedWithCookieData(): array
+    {
+        $cookiePensionPost = new Cookie(self::COOKIE_NAME);
+
+        $initializedFormData = $this->getInitializedFormData();
+        if (empty($_POST)) {
+            $formData = $cookiePensionPost->getData() ?? $initializedFormData;
+        } else {
+            $formData = array_merge($initializedFormData, $_POST);
+            $cookiePensionPost->store($formData);
+        }
+
+        return $formData;
     }
 }

@@ -1,1 +1,0 @@
-{"buildTargets":["build","exec","remove","rsync","start","stop","tests","vendor"],"launchTargets":[],"customConfigurationProvider":{"workspaceBrowse":{"browsePath":[],"compilerArgs":[]},"fileIndex":[]}}
