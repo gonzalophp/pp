@@ -1,121 +1,58 @@
 <html>
     <head>
         <style>
-            .column_4 {
-                width: 24%;
-                float: left;
-                margin-left: 5px;
-            }
-            .column_3 {
-                width: 33%;
-                float: left;
-            }
-            
-            form {
-                border: solid 1px blue;
-                display: block;
-            }
-            
-            form div.settings {
-
-                background-color: #aaddbb;
-                float: left;
-                margin: 1em 1em 1em 1em;
-            }
-            
-            form div.settings div {
-                border: solid 1px black;
-                height: auto;
-            }
-            
-            form div.buttons {
-                border: solid 1px red;
-                width: 100%;
-                display: inline-block;
-            }
-            
-            form div.buttons input {
-                float: unset;
-            }
-            
-            div.settings span {
-                height: 2em;
-                width: 80%;
-                text-align: right;                
-                display:inline-block;
-                box-sizing:border-box;
-                padding-right: 10px;
-                margin-top: 5px;
-                font-size: 0.9em;
-                font-family: monospace;
-            }
-
-            form input, form select {
-                width: 20%;
-                text-align: left;
-                display:inline-block;
-                box-sizing:border-box;
-                float: right;
-            }
-            
-            form input[type=submit] {
-                background-color: #4CAF50;
-                width:10em;
-                text-align: center;
-                margin: 1em 1em 1em 1em;
-                display: block;
-                border-radius: 8px;
-                cursor: pointer;
-            }
-            
+            {% include 'chart/view.css' %}
         </style>
     </head>
     <body>
+        
+        <div class="flex-container">
+            <div class="flex-form">
+                <form method="post">
+                    <div class="settings">
+                        <div>
+                            <span>Investment amount:</span><input name="investment_amount" placeholder="Investment amount" value="{{investment_amount}}"/>
+                            <span>Investment rate:</span>
+                            <select name="investment_rate">
+                                {% for rate in investment_rate_options %}
+                                    <option value="{{rate.name}}" {% if rate.selected is defined and rate.selected == true %}selected{% endif %}>{{rate.name}}</option>
+                                {% endfor %}
+                            </select>
+                            <span>Investment Monthly contribution:</span><input name="investment_monthly_contribution" placeholder="Monthly contribution" value="{{investment_monthly_contribution}}"/>
+                            <span>Years contribution:</span><input name="investment_contribution_years" placeholder="Years" value="{{investment_contribution_years}}"/>
+                        </div>
+                        <div>
+                            <span>Pension amount:</span><input name="pension_amount" placeholder="Pension amount" value="{{pension_amount}}"/>
+                            <span>Pension rate:</span>
+                            <select name="pension_rate">
+                                {% for rate in pension_rate_options %}
+                                    <option value="{{rate.name}}" {% if rate.selected is defined and rate.selected == true %}selected{% endif %}>{{rate.name}}</option>
+                                {% endfor %}
+                            </select>
+                            <span>Pension Monthly contribution:</span><input name="pension_monthly_contribution" placeholder="Monthly contribution" value="{{pension_monthly_contribution}}"/>
+                            <span>Years contribution:</span><input name="pension_contribution_years" placeholder="Years" value="{{pension_contribution_years}}"/>
+                        </div>
+                        <div>
+                            <span>Years:</span><input name="years" placeholder="years" value="{{years}}"/>
+                            <span>Simulations:</span><input name="simulations" placeholder="Simulations" value="{{simulations}}"/>
+                            <span>Remove percentile:</span><input name="remove_percentile" placeholder="Remove percentile" value="{{remove_percentile}}"/>
+                            <span>Withdraw year:</span><input name="withdraw_year" placeholder="Withdraw year" value="{{withdraw_year}}"/>
+                            <span>Monthly withdraw amount:</span><input name="withdraw_amount" placeholder="Monthly withdraw amount" value="{{withdraw_amount}}"/>
+                        </div>
+                        
+                    </div>
+                    <div class="buttons">
+                        <input type="submit"/>
+                    </div>
+                </form>
+            </div>
+            <div class="flex-image">
+                <img src="{{chart}}" />
+            </div>
+        </div>
+
         <p>Avg final value: {{stats_amount_end}}</p>
         <p>Start amount: {{stats_amount_start}} - Periods: {{stats_periods}} - Interest rate: {{stats_rate}}% - Final Amount: {{stats_amount_end}}</p>
         <p>Probability of success: {{stats_probability_success}}%</p>
-        <form method="post">
-            <div class="settings">
-                <div class="column_4">
-                    <span>Investment amount:</span><input name="investment_amount" placeholder="Investment amount" value="{{investment_amount}}"/>
-                    <span>Investment rate:</span>
-                    <select name="investment_rate">
-                        {% for rate in investment_rate_options %}
-                            <option value="{{rate.name}}" {% if rate.selected is defined and rate.selected == true %}selected{% endif %}>{{rate.name}}</option>
-                        {% endfor %}
-                    </select>
-                    <span>Investment Monthly contribution:</span><input name="investment_monthly_contribution" placeholder="Monthly contribution" value="{{investment_monthly_contribution}}"/>
-                    <span>Years contribution:</span><input name="investment_contribution_years" placeholder="Years" value="{{investment_contribution_years}}"/>
-                </div>
-                <div class="column_4">
-                    <span>Pension amount:</span><input name="pension_amount" placeholder="Pension amount" value="{{pension_amount}}"/>
-                    <span>Pension rate:</span>
-                    <select name="pension_rate">
-                        {% for rate in pension_rate_options %}
-                            <option value="{{rate.name}}" {% if rate.selected is defined and rate.selected == true %}selected{% endif %}>{{rate.name}}</option>
-                        {% endfor %}
-                    </select>
-                    <span>Pension Monthly contribution:</span><input name="pension_monthly_contribution" placeholder="Monthly contribution" value="{{pension_monthly_contribution}}"/>
-                    <span>Years contribution:</span><input name="pension_contribution_years" placeholder="Years" value="{{pension_contribution_years}}"/>
-                </div>
-                <div class="column_4">
-                    <span></span>
-                </div>
-                <div class="column_4">
-                    <span>Years:</span><input name="years" placeholder="years" value="{{years}}"/>
-                    <span>Simulations:</span><input name="simulations" placeholder="Simulations" value="{{simulations}}"/>
-                    <span>Remove percentile:</span><input name="remove_percentile" placeholder="Remove percentile" value="{{remove_percentile}}"/>
-                    <span>Withdraw year:</span><input name="withdraw_year" placeholder="Withdraw year" value="{{withdraw_year}}"/>
-                    <span>Monthly withdraw amount:</span><input name="withdraw_amount" placeholder="Monthly withdraw amount" value="{{withdraw_amount}}"/>
-                </div>
-                
-            </div>
-            <div class="buttons">
-                <input type="submit"/>
-            </div>
-        </form>
-        <div>
-            <p><img src="{{chart}}" /></p>
-        </div>
     </body>
 </html>

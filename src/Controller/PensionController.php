@@ -16,6 +16,7 @@ use function Symfony\Component\DependencyInjection\Loader\Configurator\iterator;
 class PensionController extends AbstractController
 {
     private const COOKIE_NAME = 'pension_data';
+    private const COOKIE_EXPIRE = 90*24*60*60; // 90 days
 
     public function __construct(
         private FileSearch $fileSearch,
@@ -195,7 +196,7 @@ class PensionController extends AbstractController
             $formData = $cookiePensionPost->getData() ?? $initializedFormData;
         } else {
             $formData = array_merge($initializedFormData, $_POST);
-            $cookiePensionPost->store($formData);
+            $cookiePensionPost->store($formData, time() + self::COOKIE_EXPIRE);
         }
 
         return $formData;

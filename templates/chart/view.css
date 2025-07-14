@@ -1,0 +1,72 @@
+
+div.flex-container {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 2em;
+        padding: 15px;
+}
+
+div.flex-form, div.flex-image {
+    background-color: #64b5f61a; /* Light Blue */
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    flex: 1;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    flex-basis:content;
+}
+
+form {
+    border: solid 1px blue;
+    display: block;
+}
+
+form div.settings {
+    background-color: #93e2ad;
+    display: flex;
+    flex-direction: column;
+}
+
+form div.settings div {
+    border: solid 1px black;
+    margin: 1em;
+}
+
+form div.buttons {
+    border: solid 1px red;
+}
+
+form div.buttons input {
+    float: unset;
+}
+
+div.settings span {
+    height: 2em;
+    width: 80%;
+    text-align: right;                
+    display:inline-block;
+    box-sizing:border-box;
+    padding-right: 10px;
+    margin-top: 5px;
+    font-size: 0.9em;
+    font-family: monospace;
+}
+
+form input, form select {
+    width: 20%;
+    text-align: left;
+    display:inline-block;
+    box-sizing:border-box;
+    float: right;
+}
+
+form input[type=submit] {
+    background-color: #4CAF50;
+    width:10em;
+    text-align: center;
+    margin: 1em 1em 1em 1em;
+    display: block;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
