@@ -78,3 +78,15 @@ form input[type=submit] {
     padding: 0.5em;
 }
 
+span.color_green {
+    color: rgb(30, 180, 10);
+}
+
+span.color_red {
+    color: red;
+}
+
+div.stats ul li {
+    list-style-type: none;
+    font-weight: bold;
+}

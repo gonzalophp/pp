@@ -124,31 +124,51 @@ class PensionController extends AbstractController
         int $periods,
         int $simulations,
         float $removePercentile
-        ): array
-    {   
+    ): array {   
         $sumOfMarketPrices = [];
         
         if ($marketGrowthRatesRepositories) {
-            $percentile = (int) $formData['remove_percentile'];
-            $simulations = (int) ($formData['simulations'] / (1 - (($percentile * 2) / 100)));
-            $simulations = (($simulations % 2) == 0) ? $simulations : ++$simulations;
+            $computedSimulationsRequired = (int) ($simulations / (1 - (($removePercentile * 2) / 100)));
+            $computedSimulationsRequired = (($computedSimulationsRequired % 2) == 0) ? $computedSimulationsRequired : ++$computedSimulationsRequired;
 
             $priceGenerator = new PriceGenerator();
             
-            if ($simulations > 0) {
-                foreach (range(1, $simulations) as $v) {
-                    $sumOfMarketPrices[] = $priceGenerator->getSumOfPrices(
-                            $marketGrowthRatesRepositories,
-                            $formData['years'] * 12,
-                            $formData
+            if ($computedSimulationsRequired > 0) {
+                $withdrawStartPeriod = ((int) $formData['withdraw_year']) * 12;
+                $withdrawAmountPerPeriod = (int) $formData['withdraw_amount'];
+                foreach (range(1, $computedSimulationsRequired) as $v) {
+                    $marketRates = $this->getMarketRates(
+                        $marketGrowthRatesRepositories, 
+                        $periods
+                    );
+                    $sumOfMarketPrices[] = $priceGenerator->getSumOfMarketValues(
+                            $marketRates,
+                            $periods,
+                            $formData,
+                            $withdrawStartPeriod,
+                            $withdrawAmountPerPeriod
                     );
                 }
             }
                     
-            $sumOfMarketPrices = $this->filterPercentile($sumOfMarketPrices, $simulations, $formData['simulations']);
+            $sumOfMarketPrices = $this->filterPercentile($sumOfMarketPrices, $computedSimulationsRequired, $formData['simulations']);
         }
 
         return $sumOfMarketPrices;
+    }
+
+    private function getMarketRates(array $marketGrowthRateRepositories, int $periods) : array
+    {
+        $marketRates = [];
+        $markets = array_keys($marketGrowthRateRepositories);
+        foreach ($marketGrowthRateRepositories as $market => $marketGrowthRateRepository) {
+            $marketRates[$market] = array_map(
+                fn() => $marketGrowthRateRepository->getRandomRate(),
+                range(0, $periods - 1)
+            );
+        }
+
+        return $marketRates;
     }
     
     private function filterPercentile($marketPrices, int $computedSimulations, int $requestedSimulations): array

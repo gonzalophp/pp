@@ -5,27 +5,22 @@ use App\Repository\MarketGrowthRateRepository;
 
 class PriceGenerator {
     /**
-     * @param MarketGrowthRateRepository[] $marketGrowthRates
+     * @param MarketGrowthRateRepository[] $marketGrowthRateRepositories
      * @param int $periods
      * @param array $formData
      */
-    public function getSumOfPrices(array $marketGrowthRates, int $periods, array $formData)
-    {
-        $rates = [];
-        foreach ($marketGrowthRates as $market => $marketGrowthRateRepository) {
-            $rates[$market] = array_map(
-                fn() => $marketGrowthRateRepository->getRandomRate(),
-                range(0, $periods - 1)
-            );
-        }
-        
-        $withdrawStart = ((int) $formData['withdraw_year']) * 12;
-        $withdrawAmount = (int) $formData['withdraw_amount'];
-
-        $sumOfPrices = [];
+    public function getSumOfMarketValues(
+        array $marketRates, 
+        int $periods, 
+        array $formData,
+        int $withdrawStartPeriod,
+        int $withdrawAmountPerPeriod
+    ){
+        $markets = array_keys($marketRates);
+        $sumOfMarketValues = [];
         $marketPrices = [];
         foreach(range(0, $periods) as $period) {
-            foreach (array_keys($marketGrowthRates) as $market) {
+            foreach ($markets as $market) {
                 if ($period === 0) {
                     $marketPrices[$market] = [$period => $formData[$market . '_amount']];
                 } else {
@@ -38,32 +33,53 @@ class PriceGenerator {
                     $baseForTheMarketPeriod = ($marketPrices[$market][$period - 1] + $periodicalContribution);
                     
                     if ($baseForTheMarketPeriod > 0)  {
-                        $marketPrices[$market][$period] = round($baseForTheMarketPeriod * (1 + ($rates[$market][$period - 1] / 100)), 2);
+                        $marketPrices[$market][$period] = round($baseForTheMarketPeriod * (1 + ($marketRates[$market][$period - 1] / 100)), 2);
                     } else {
                         $marketPrices[$market][$period] = $baseForTheMarketPeriod;
                     }
                 }
             }
             
-            $withdraw = ($period >= $withdrawStart) ? $withdrawAmount : 0;
-            if ($withdraw > 0) {
-                $totalFromMarketsSoFar = 0;
-                foreach (array_keys($marketGrowthRates) as $market) {
-                    $totalFromMarketsSoFar += $marketPrices[$market][$period];
+            if (($withdrawAmountPerPeriod > 0) && ($period >= $withdrawStartPeriod)) {
+                $currentMarketValues = [];
+                foreach ($markets as $market) {
+                    $currentMarketValues[$market] = $marketPrices[$market][$period];
                 }
-                
-                foreach (array_keys($marketGrowthRates) as $market) {
-                    $marketPrices[$market][$period] -= (int)($withdraw * ($marketPrices[$market][$period]/$totalFromMarketsSoFar));
+                $percentageOfTotal = $this->getPercentagesOfTotal($currentMarketValues);
+                foreach ($percentageOfTotal as $market => $percentage) {
+                    $marketPrices[$market][$period] -= (int) (($withdrawAmountPerPeriod * $percentage) / 100);
                 }
             }
                 
             
-            $sumOfPrices[$period] = 0;
-            foreach (array_keys($marketGrowthRates) as $market) {
-                $sumOfPrices[$period] += $marketPrices[$market][$period];
+            $sumOfMarketValues[$period] = 0;
+            foreach ($markets as $market) {
+                $sumOfMarketValues[$period] += $marketPrices[$market][$period];
             }
         }
  
-        return $sumOfPrices;
+        return $sumOfMarketValues;
+    }
+
+    private function getPercentagesOfTotal(array $marketValues): array
+    {
+        $totalValue = 0;
+        foreach ($marketValues as $market => $value) {
+            $totalValue += $value;
+        }
+
+        $tempPercentagesOfTotal = [];
+
+        foreach ($marketValues as $market => $value) {
+            $tempPercentagesOfTotal[$market] = (100000 * $value) / $totalValue;
+        }
+
+        $percentagesOfTotal = [];
+        foreach ($tempPercentagesOfTotal as $market => $tempPercentage) {
+            $tempPercentagesOfTotal[$market] = round($tempPercentage / 1000, 2);
+        }
+        
+
+        return $percentagesOfTotal;        
     }
 }

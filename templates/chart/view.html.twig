@@ -5,7 +5,13 @@
         </style>
     </head>
     <body>
-        
+        <div class="stats">
+            <ul>
+                <li>Avg final value: {{stats_amount_end|number_format}}</li>
+                <li>Start amount: {{stats_amount_start|number_format}} - Periods: {{stats_periods}} - Interest rate: {{stats_rate}}% - Final Amount: {{stats_amount_end|number_format}}</li>
+                <li>Probability of success: <span class="{{stats_probability_success==100 ? 'color_green' : 'color_red'}}">{{stats_probability_success}}%</span></li>
+            </ul>
+        </div>
         <div class="flex-container">
             <div class="flex-form">
                 <form method="post">
@@ -53,8 +59,6 @@
             </div>
         </div>
 
-        <p>Avg final value: {{stats_amount_end}}</p>
-        <p>Start amount: {{stats_amount_start}} - Periods: {{stats_periods}} - Interest rate: {{stats_rate}}% - Final Amount: {{stats_amount_end}}</p>
-        <p>Probability of success: {{stats_probability_success}}%</p>
+        
     </body>
 </html>
