@@ -9,7 +9,17 @@
         <div class="flex-container">
             <div class="flex-form">
                 <form method="post">
+                    <div class="buttons">
+                        <input type="submit" value="Run"/>
+                    </div>
                     <div class="settings">
+                        <div>
+                            <span>Years:</span><input name="years" placeholder="years" value="{{years}}"/>
+                            <span>Simulations:</span><input name="simulations" placeholder="Simulations" value="{{simulations}}"/>
+                            <span>Remove percentile:</span><input name="remove_percentile" placeholder="Remove percentile" value="{{remove_percentile}}"/>
+                            <span>Withdraw year:</span><input name="withdraw_year" placeholder="Withdraw year" value="{{withdraw_year}}"/>
+                            <span>Monthly withdraw amount:</span><input name="withdraw_amount" placeholder="Monthly withdraw amount" value="{{withdraw_amount}}"/>
+                        </div>
                         <div>
                             <span>Investment amount:</span><input name="investment_amount" placeholder="Investment amount" value="{{investment_amount}}"/>
                             <span>Investment rate:</span>
@@ -32,18 +42,10 @@
                             <span>Pension Monthly contribution:</span><input name="pension_monthly_contribution" placeholder="Monthly contribution" value="{{pension_monthly_contribution}}"/>
                             <span>Years contribution:</span><input name="pension_contribution_years" placeholder="Years" value="{{pension_contribution_years}}"/>
                         </div>
-                        <div>
-                            <span>Years:</span><input name="years" placeholder="years" value="{{years}}"/>
-                            <span>Simulations:</span><input name="simulations" placeholder="Simulations" value="{{simulations}}"/>
-                            <span>Remove percentile:</span><input name="remove_percentile" placeholder="Remove percentile" value="{{remove_percentile}}"/>
-                            <span>Withdraw year:</span><input name="withdraw_year" placeholder="Withdraw year" value="{{withdraw_year}}"/>
-                            <span>Monthly withdraw amount:</span><input name="withdraw_amount" placeholder="Monthly withdraw amount" value="{{withdraw_amount}}"/>
-                        </div>
+                        
                         
                     </div>
-                    <div class="buttons">
-                        <input type="submit"/>
-                    </div>
+                    
                 </form>
             </div>
             <div class="flex-image">

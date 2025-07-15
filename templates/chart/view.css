@@ -27,6 +27,12 @@ form div.settings {
     flex-direction: column;
 }
 
+form div.settings div:first-child {
+    background-color: #23c057;
+    font-weight: bold;
+    font-size: larger;
+}
+
 form div.settings div {
     border: solid 1px black;
     margin: 1em;
@@ -34,6 +40,8 @@ form div.settings div {
 
 form div.buttons {
     border: solid 1px red;
+    display: flex;
+    flex-direction: row-reverse;
 }
 
 form div.buttons input {
@@ -55,7 +63,6 @@ div.settings span {
 form input, form select {
     width: 20%;
     text-align: left;
-    display:inline-block;
     box-sizing:border-box;
     float: right;
 }
@@ -68,5 +75,6 @@ form input[type=submit] {
     display: block;
     border-radius: 8px;
     cursor: pointer;
+    padding: 0.5em;
 }
 

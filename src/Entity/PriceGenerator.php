@@ -26,7 +26,6 @@ class PriceGenerator {
         $marketPrices = [];
         foreach(range(0, $periods) as $period) {
             foreach (array_keys($marketGrowthRates) as $market) {
-                // $formData[$market . '_amount'] = 100000;
                 if ($period === 0) {
                     $marketPrices[$market] = [$period => $formData[$market . '_amount']];
                 } else {

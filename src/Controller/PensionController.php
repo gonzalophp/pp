@@ -64,9 +64,16 @@ class PensionController extends AbstractController
         $marketGrowthRatesRepositories = $this->getMarketGrowthRepositories($markets, $formData);
         $sumOfMarketPrices = $this->getSumOfMarketPrices(
             $marketGrowthRatesRepositories, 
-            $formData
+            $formData,
+            $formData['years'] * 12,
+            $formData['simulations'],
+            $formData['remove_percentile'],
         );
-        $formData['chart'] = 'data:image/png;base64,' . $this->chart->getImageDataBase64(900, 600, $sumOfMarketPrices);
+        $formData['chart'] = 'data:image/png;base64,' . $this->chart->getImageDataBase64(
+            900, 
+            600, 
+            $sumOfMarketPrices
+        );
 
         if (count($sumOfMarketPrices) > 0) {
             $finalValues = array_column($sumOfMarketPrices, array_key_last(current($sumOfMarketPrices)));
@@ -78,9 +85,13 @@ class PensionController extends AbstractController
             $interest = 12 * (pow(($averageFinalValue/$initialValue), (1/$periods)) - 1);
             $interestRate = number_format(($interest * 100), 2);
 
-            $finalValueNegativeCount = array_reduce($sumOfMarketPrices, function ($carry, $item) {
-                return (end($item) < 0) ? ++$carry : $carry;
-            }, 0);
+            $finalValueNegativeCount = array_reduce(
+                $sumOfMarketPrices, 
+                function ($carry, $item) {
+                    return (end($item) < 0) ? ++$carry : $carry;
+                }, 
+                0
+            );
 
             $statsProbabilitySuccess = number_format(((count($finalValues) - $finalValueNegativeCount) / count($finalValues)) * 100, 2);
             
@@ -107,7 +118,13 @@ class PensionController extends AbstractController
         return $marketGrowthRatesRepositories;
     }
     
-    private function getSumOfMarketPrices(array $marketGrowthRatesRepositories, $formData): array
+    private function getSumOfMarketPrices(
+        array $marketGrowthRatesRepositories, 
+        array $formData,
+        int $periods,
+        int $simulations,
+        float $removePercentile
+        ): array
     {   
         $sumOfMarketPrices = [];
         
