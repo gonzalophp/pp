@@ -7,7 +7,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Cookie;
 use App\Service\Chart;
-use App\Entity\PriceGenerator;
+use App\Service\PriceGenerator;
 use App\Repository\MarketGrowthRate\Adapter\AdapterFactory;
 use App\Repository\MarketGrowthRateRepository;
 
@@ -52,13 +52,13 @@ class PensionController extends AbstractController
         foreach ($markets as $market) {
             $options = [];
             foreach ($csvFiles as $csvFile) {
-                $selected = (isset($formData[$market . '_rate']) && ($formData[$market . '_rate'] == $csvFile));
+                $selected = (isset($formData["market_{$market}_rate"]) && ($formData["market_{$market}_rate"] == $csvFile));
                 $options[] = [
                     'name' => $csvFile, 
                     'selected' => $selected
                 ];
             }
-            $formData[$market . '_rate_options'] = $options;
+            $formData["market_{$market}_rate_options"] = $options;
         }
         
         $marketGrowthRatesRepositories = $this->getMarketGrowthRepositories($markets, $formData);
@@ -108,9 +108,9 @@ class PensionController extends AbstractController
     private function getMarketGrowthRepositories(array $markets, array $formData): array {
         $marketGrowthRatesRepositories = [];
         foreach ($markets as $market) {
-            if (isset($formData[$market . '_rate'])) {
+            if (isset($formData["market_{$market}_rate"])) {
                 $marketRateGrowthAdapter = $this->adapterFactory
-                    ->getAdapter($formData[$market . '_rate']);
+                    ->getAdapter($formData["market_{$market}_rate"]);
                 $marketGrowthRatesRepositories[$market] = new MarketGrowthRateRepository($marketRateGrowthAdapter);
             }
         }
@@ -200,14 +200,14 @@ class PensionController extends AbstractController
             'years' => 0,
             
             //            'investment_rate' => 0,
-            'investment_amount' => 0,
-            'investment_contribution_years' => 0,
-            'investment_monthly_contribution' => 0,
+            'market_investment_amount' => 0,
+            'market_investment_contribution_years' => 0,
+            'market_investment_monthly_contribution' => 0,
 
             //            'pension_rate' => 0,
-            'pension_amount' => 0,
-            'pension_contribution_years' => 0,
-            'pension_monthly_contribution' => 0,
+            'market_pension_amount' => 0,
+            'market_pension_contribution_years' => 0,
+            'market_pension_monthly_contribution' => 0,
 
             'simulations' => 0,
             'remove_percentile' => 0,

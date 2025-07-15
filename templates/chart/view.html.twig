@@ -27,26 +27,26 @@
                             <span>Monthly withdraw amount:</span><input name="withdraw_amount" placeholder="Monthly withdraw amount" value="{{withdraw_amount}}"/>
                         </div>
                         <div>
-                            <span>Investment amount:</span><input name="investment_amount" placeholder="Investment amount" value="{{investment_amount}}"/>
+                            <span>Investment amount:</span><input name="market_investment_amount" placeholder="Investment amount" value="{{market_investment_amount}}"/>
                             <span>Investment rate:</span>
-                            <select name="investment_rate">
-                                {% for rate in investment_rate_options %}
+                            <select name="market_investment_rate">
+                                {% for rate in market_investment_rate_options %}
                                     <option value="{{rate.name}}" {% if rate.selected is defined and rate.selected == true %}selected{% endif %}>{{rate.name}}</option>
                                 {% endfor %}
                             </select>
-                            <span>Investment Monthly contribution:</span><input name="investment_monthly_contribution" placeholder="Monthly contribution" value="{{investment_monthly_contribution}}"/>
-                            <span>Years contribution:</span><input name="investment_contribution_years" placeholder="Years" value="{{investment_contribution_years}}"/>
+                            <span>Investment Monthly contribution:</span><input name="market_investment_monthly_contribution" placeholder="Monthly contribution" value="{{market_investment_monthly_contribution}}"/>
+                            <span>Years contribution:</span><input name="market_investment_contribution_years" placeholder="Years" value="{{market_investment_contribution_years}}"/>
                         </div>
                         <div>
-                            <span>Pension amount:</span><input name="pension_amount" placeholder="Pension amount" value="{{pension_amount}}"/>
+                            <span>Pension amount:</span><input name="market_pension_amount" placeholder="Pension amount" value="{{market_pension_amount}}"/>
                             <span>Pension rate:</span>
-                            <select name="pension_rate">
-                                {% for rate in pension_rate_options %}
+                            <select name="market_pension_rate">
+                                {% for rate in market_pension_rate_options %}
                                     <option value="{{rate.name}}" {% if rate.selected is defined and rate.selected == true %}selected{% endif %}>{{rate.name}}</option>
                                 {% endfor %}
                             </select>
-                            <span>Pension Monthly contribution:</span><input name="pension_monthly_contribution" placeholder="Monthly contribution" value="{{pension_monthly_contribution}}"/>
-                            <span>Years contribution:</span><input name="pension_contribution_years" placeholder="Years" value="{{pension_contribution_years}}"/>
+                            <span>Pension Monthly contribution:</span><input name="market_pension_monthly_contribution" placeholder="Monthly contribution" value="{{market_pension_monthly_contribution}}"/>
+                            <span>Years contribution:</span><input name="market_pension_contribution_years" placeholder="Years" value="{{market_pension_contribution_years}}"/>
                         </div>
                         
                         

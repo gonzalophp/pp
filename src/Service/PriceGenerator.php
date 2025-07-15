@@ -1,5 +1,5 @@
 <?php
-namespace App\Entity;
+namespace App\Service;
 
 use App\Repository\MarketGrowthRateRepository;
 
@@ -22,13 +22,13 @@ class PriceGenerator {
         foreach(range(0, $periods) as $period) {
             foreach ($markets as $market) {
                 if ($period === 0) {
-                    $marketPrices[$market] = [$period => $formData[$market . '_amount']];
+                    $marketPrices[$market] = [$period => $formData["market_{$market}_amount"]];
                 } else {
-                    $contributionPeriods = $formData[$market . '_contribution_years'] * 12;
+                    $contributionPeriods = $formData["market_{$market}_contribution_years"] * 12;
                     if ($period >= $contributionPeriods) {
                         $periodicalContribution = 0;
                     } else {
-                        $periodicalContribution = $formData[$market . '_monthly_contribution'];
+                        $periodicalContribution = $formData["market_{$market}_monthly_contribution"];
                     }
                     $baseForTheMarketPeriod = ($marketPrices[$market][$period - 1] + $periodicalContribution);
                     
