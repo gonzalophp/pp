@@ -25,4 +25,4 @@
 ###< symfony/asset-mapper ###
 
 /.vscode/
-
+/node_modules/
