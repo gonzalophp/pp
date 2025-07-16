@@ -33,19 +33,24 @@ form div.settings div:first-child {
     font-size: larger;
 }
 
-form div.settings div {
-    border: solid 1px black;
-    margin: 1em;
-}
-
 form div.buttons {
     border: solid 1px red;
     display: flex;
     flex-direction: row-reverse;
 }
 
-form div.buttons input {
-    float: unset;
+form div.settings div {
+    border: solid 1px black;
+    margin: 1em;
+}
+
+form div.settings div.add_market {
+    display: flex;
+}
+
+form div.settings div.add_market input[type="text"]{
+    flex: auto;
+    margin: 1em 1em 1em 1em;
 }
 
 div.settings span {
@@ -65,9 +70,10 @@ form input, form select {
     text-align: left;
     box-sizing:border-box;
     float: right;
+    height: 2em;
 }
 
-form input[type=submit] {
+form input[type=submit],form input[type=button] {
     background-color: #4CAF50;
     width:10em;
     text-align: center;

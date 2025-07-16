@@ -11,8 +11,6 @@ use App\Service\PriceGenerator;
 use App\Repository\MarketGrowthRate\Adapter\AdapterFactory;
 use App\Repository\MarketGrowthRateRepository;
 
-use function Symfony\Component\DependencyInjection\Loader\Configurator\iterator;
-
 class PensionController extends AbstractController
 {
     private const COOKIE_NAME = 'pension_data';
