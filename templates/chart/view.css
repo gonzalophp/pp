@@ -45,12 +45,19 @@ form div.settings div {
 }
 
 form div.settings div.add_market {
+    margin: 0;
+    border: 0;
+    padding: 0em 0 0 0.5em;
     display: flex;
+    align-items: center;
 }
 
-form div.settings div.add_market input[type="text"]{
-    flex: auto;
-    margin: 1em 1em 1em 1em;
+form div.settings div.add_market input[type="text"] {
+        width: 80%;
+}
+
+form div.settings div.add_market input[type="button"] {
+        width: 10em;
 }
 
 div.settings span {

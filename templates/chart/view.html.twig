@@ -26,9 +26,8 @@
                             <span>Withdraw year:</span><input name="withdraw_year" placeholder="Withdraw year" value="{{withdraw_year}}"/>
                             <span>Monthly withdraw amount:</span><input name="withdraw_amount" placeholder="Monthly withdraw amount" value="{{withdraw_amount}}"/>
                         </div>
-                        <div class="add_market">
-                            <input name="new_market" type="text" placeholder="Market Name"/>
-                            <input type="button" value="Add Market"/>
+                        <div id="react_add_market">
+                            <p>Loading interactive Button...</p>
                         </div>
                         <div>
                             <span>Investment amount:</span><input name="market_investment_amount" placeholder="Investment amount" value="{{market_investment_amount}}"/>
@@ -52,10 +51,7 @@
                             <span>Pension Monthly contribution:</span><input name="market_pension_monthly_contribution" placeholder="Monthly contribution" value="{{market_pension_monthly_contribution}}"/>
                             <span>Years contribution:</span><input name="market_pension_contribution_years" placeholder="Years" value="{{market_pension_contribution_years}}"/>
                         </div>
-                        
-                        
                     </div>
-                    
                 </form>
             </div>
             <div class="flex-image">
@@ -66,21 +62,11 @@
         
         
 
-        <div class="old-content">
-            <p>This is existing HTML content. It's static and comes directly from the server.</p>
-            <p>We're now going to embed a dynamic React component right below this paragraph.</p>
-            <p>Imagine this is a blog post, a product description, or any static page.</p>
-        </div>
 
         <div id="react-app-root">
             <p>Loading interactive content...</p>
         </div>
 
-        <div class="old-content" style="margin-top: 30px;">
-            <p>More traditional HTML content follows the React component.</p>
-            <p>The React app doesn't take over the whole page; it only occupies its designated root element.</p>
-        </div>
-        
 
         <script src="dist/bundle.js"></script>
     </body>
