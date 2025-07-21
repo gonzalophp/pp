@@ -1,24 +1,30 @@
 import React,{useState} from 'react';
 
-function MarketForm() {
+function MarketForm({
+  amount,
+  monthly_contribution,
+  contribution_years,
+  rate
+}) {
+  console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' + amount);
+  console.log(amount);
   const [marketForm, set] = useState({
-    id: 1,
-    market_investment_amount: '111',
-    market_investment_monthly_contribution: '222',
-    market_investment_contribution_years: '3',
-    market_investment_rate: 'tttttttttttttt'
+    amount: amount,
+    monthly_contribution: monthly_contribution,
+    contribution_years: contribution_years,
+    rate: rate
   });
 
   return (
     <div>
         <span>Investment amount:</span>
-        <input name="market_investment_amount" placeholder="Investment amount" value={marketForm.market_investment_amount}/>
+        <input name="amount" placeholder="Investment amount" value={marketForm.amount}/>
         <span>Investment rate:</span>
-        <select name="market_investment_rate">
-          <option value="aaaaa">ddddddddddddd</option>
+        <select name="rate">
+          <option value={marketForm.rate}>{marketForm.rate}</option>
         </select>
-        <span>Investment Monthly contribution:</span><input name="market_investment_monthly_contribution" placeholder="Monthly contribution" value={marketForm.market_investment_monthly_contribution}/>
-        <span>Years contribution:</span><input name="market_investment_contribution_years" placeholder="Years" value={marketForm.market_investment_contribution_years} />
+        <span>Investment Monthly contribution:</span><input name="monthly_contribution" placeholder="Monthly contribution" value={marketForm.monthly_contribution}/>
+        <span>Years contribution:</span><input name="contribution_years" placeholder="Years" value={marketForm.contribution_years} />
     </div>
   );
 }

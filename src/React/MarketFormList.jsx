@@ -1,19 +1,26 @@
-import React, {useState} from 'react';
+import React, {useState, useId} from 'react';
 
 import MarketForm from './MarketForm.jsx';
 
 function MarketFormList() {
   const [marketName, setMarketName] = useState('');
 
-  const [marketFormList, seMarketForms] = useState([{id:1,aaa:"bbb"}]);
+  const [marketFormList, setMarketForms] = useState([]);
   const removeForm = (idToRemove) => {
-    seMarketForms(prevForms => prevForms.filter(marketForm => marketForm.id !== idToRemove));
+    setMarketForms(prevForms => prevForms.filter(marketForm => marketForm.id !== idToRemove));
   };
   const addForm = () => {
-    console.log('eeeeeeeeeeeeeeeeeee');
-    seMarketForms(prevForms => [...prevForms, {id:2,aaa:"ccc"}]);
+    const newForm = {
+        id: 6,
+        amount: 7777,
+        monthly_contribution: 88,
+        contribution_years: 5,
+        rate: "wwwwwwwwwwwwwwwww"
+      };
+
+    console.log('eeeeeeeeeeeeeeeeeee     ');
+    setMarketForms(prevForms => [...prevForms, newForm]);
   };
-  
 
   return (
     <div>
@@ -26,6 +33,10 @@ function MarketFormList() {
         <MarketForm
           key={marketForm.id} // Important: Provide a unique key for each item in a list
           id={marketForm.id}
+          amount="99"
+          monthly_contribution="22"
+          contribution_years="3"
+          rate="XXXXXXXXXXXXXXX"
           onRemove={removeForm} // Pass the removeForm function as a prop
         />
       ))}
