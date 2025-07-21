@@ -1,6 +1,7 @@
 import React,{useState} from 'react';
 
 function MarketForm({
+  market,
   amount,
   monthly_contribution,
   contribution_years,
@@ -9,6 +10,7 @@ function MarketForm({
   console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee' + amount);
   console.log(amount);
   const [marketForm, set] = useState({
+    market: market,
     amount: amount,
     monthly_contribution: monthly_contribution,
     contribution_years: contribution_years,
@@ -17,6 +19,7 @@ function MarketForm({
 
   return (
     <div>
+        <p>{marketForm.market}</p>
         <span>Investment amount:</span>
         <input name="amount" placeholder="Investment amount" value={marketForm.amount}/>
         <span>Investment rate:</span>

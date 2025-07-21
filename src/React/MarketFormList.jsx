@@ -10,22 +10,18 @@ function MarketFormList() {
     setMarketForms(prevForms => prevForms.filter(marketForm => marketForm.id !== idToRemove));
   };
   const addForm = () => {
-    const newForm = {
-        id: 6,
-        amount: 7777,
-        monthly_contribution: 88,
-        contribution_years: 5,
-        rate: "wwwwwwwwwwwwwwwww"
-      };
-
     console.log('eeeeeeeeeeeeeeeeeee     ');
-    setMarketForms(prevForms => [...prevForms, newForm]);
+    setMarketForms(prevForms => [...prevForms, {}]);
+  };
+
+  const marketNameChange = (e) => {
+    setMarketName(e.target.value);
   };
 
   return (
     <div>
       <div id="add_market" className="add_market">
-        <input name="new_market" type="text" placeholder="Market Name" value={marketName} /> 
+        <input name="new_market" type="text" placeholder="Market Name" value={marketName} onChange={marketNameChange}/> 
         <input type="button" value="Add Market" onClick={addForm} />
       </div>
 
@@ -33,6 +29,7 @@ function MarketFormList() {
         <MarketForm
           key={marketForm.id} // Important: Provide a unique key for each item in a list
           id={marketForm.id}
+          market={marketName}
           amount="99"
           monthly_contribution="22"
           contribution_years="3"
