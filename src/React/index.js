@@ -3,6 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client'; // For React 18+
 import MyComponent from './MyComponent.jsx';
 import AddMarketButton from './AddMarketButton.jsx';
+import MarketFormList from './MarketFormList.jsx';
 
 
 const container = document.getElementById('react-app-root');
@@ -21,12 +22,13 @@ if (container) {
 
 
 
-const container2 = document.getElementById('react_add_market');
-if (container2) {
-  const root2 = ReactDOM.createRoot(container2);
-  root2.render(
+const containerAddMarket = document.getElementById('react_add_market');
+if (containerAddMarket) {
+  const rootContainerAddMarket = ReactDOM.createRoot(containerAddMarket);
+  rootContainerAddMarket.render(
     <React.StrictMode>
       <AddMarketButton />
+      <MarketFormList />
     </React.StrictMode>
   );
 } else {

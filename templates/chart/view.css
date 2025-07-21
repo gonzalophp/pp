@@ -6,6 +6,10 @@ div.flex-container {
         padding: 15px;
 }
 
+div.flex-image {
+    display: none;
+}
+
 div.flex-form, div.flex-image {
     background-color: #64b5f61a; /* Light Blue */
     padding: 20px;

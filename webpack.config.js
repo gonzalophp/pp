@@ -3,7 +3,7 @@ const path = require('path');
 
 module.exports = {
   // 1. Entry point: where Webpack starts building your React application
-  entry: './src/index.js',
+  entry: './src/React/index.js',
 
   // 2. Output: where Webpack puts the compiled JavaScript bundle
   output: {
