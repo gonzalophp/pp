@@ -2,7 +2,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client'; // For React 18+
 import MyComponent from './MyComponent.jsx';
-import AddMarketButton from './AddMarketButton.jsx';
 import MarketFormList from './MarketFormList.jsx';
 
 
@@ -27,7 +26,6 @@ if (containerAddMarket) {
   const rootContainerAddMarket = ReactDOM.createRoot(containerAddMarket);
   rootContainerAddMarket.render(
     <React.StrictMode>
-      <AddMarketButton />
       <MarketFormList />
     </React.StrictMode>
   );
