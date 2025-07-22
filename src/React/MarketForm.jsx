@@ -19,6 +19,7 @@ function MarketForm({
 
   return (
     <div>
+        <p>{marketForm.amount} --------rrrrrrrrr------ {contribution_years}</p>
         <p>{marketForm.market}</p>
         <span>Investment amount:</span>
         <input name="amount" placeholder="Investment amount" value={marketForm.amount}/>

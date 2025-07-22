@@ -18,6 +18,10 @@ function MarketFormList() {
     setMarketName(e.target.value);
   };
 
+  marketFormList.forEach((marketForm) => {
+    console.log("ssssssssswwwwwwwwwssssssssss",marketForm.amount,marketForm.rate,marketForm.contribution_years,marketForm.monthly_contribution);
+  });
+
   return (
     <div>
       <div id="add_market" className="add_market">
@@ -30,10 +34,10 @@ function MarketFormList() {
           key={marketForm.id} // Important: Provide a unique key for each item in a list
           id={marketForm.id}
           market={marketName}
-          amount="99"
-          monthly_contribution="22"
-          contribution_years="3"
-          rate="XXXXXXXXXXXXXXX"
+          amount={marketForm.amount}
+          monthly_contribution={marketForm.monthly_contribution}
+          contribution_years={marketForm.contribution_years}
+          rate={marketForm.rate}
           onRemove={removeForm} // Pass the removeForm function as a prop
         />
       ))}
