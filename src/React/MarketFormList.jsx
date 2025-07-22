@@ -1,17 +1,24 @@
-import React, {useState, useId} from 'react';
+import React, {useState, useRef} from 'react';
 
 import MarketForm from './MarketForm.jsx';
 
 function MarketFormList() {
   const [marketName, setMarketName] = useState('');
-
   const [marketFormList, setMarketForms] = useState([]);
+  const nextId = useRef(0);
+
   const removeForm = (idToRemove) => {
     setMarketForms(prevForms => prevForms.filter(marketForm => marketForm.id !== idToRemove));
   };
   const addForm = () => {
+    const id = nextId.current++;
     const newForm = {
-      // id: useId() // Generate a unique ID for the new form
+      id: id,
+      market: marketName,
+      amount: '',
+      monthly_contribution: '',
+      contribution_years: '',
+      rate: ''
     };
     setMarketForms(prevForms => [...prevForms, newForm]);
   };
@@ -19,10 +26,6 @@ function MarketFormList() {
   const marketNameChange = (e) => {
     setMarketName(e.target.value);
   };
-
-  marketFormList.forEach((marketForm) => {
-    console.log("ssssssssswwwwwwwwwssssssssss",marketForm.amount,marketForm.rate,marketForm.contribution_years,marketForm.monthly_contribution);
-  });
 
   return (
     <div>
@@ -34,6 +37,7 @@ function MarketFormList() {
       {marketFormList.map(marketForm => (
         <MarketForm
           key={marketForm.id}
+          id={marketForm.id}
           market={marketName}
           amount={marketForm.amount}
           monthly_contribution={marketForm.monthly_contribution}
@@ -41,7 +45,8 @@ function MarketFormList() {
           rate={marketForm.rate}
           onRemove={removeForm}
           onChange={(updatedForm) => {
-            setMarketForms(prevForms => prevForms.map(form => form.id === marketForm.id ? updatedForm : form));
+            console.log(updatedForm);
+            // setMarketForms(prevForms => prevForms.map(form => form.id === marketForm.id ? updatedForm : form));
           }}
         />
       ))}

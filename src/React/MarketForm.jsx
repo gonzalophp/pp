@@ -1,6 +1,7 @@
 import React,{useState} from 'react';
 
 function MarketForm({
+  id,
   market,
   amount,
   monthly_contribution,
@@ -9,6 +10,7 @@ function MarketForm({
   onChange
 }) {
   const [marketForm, setMarketForm] = useState({
+    id:id,
     market: market,
     amount: amount || '',
     monthly_contribution: monthly_contribution || '',
@@ -27,6 +29,7 @@ function MarketForm({
   // Use useEffect to sync changes from props to state, handling cases where props might change
   React.useEffect(() => {
     setMarketForm({
+      id:id,
       market: market,
       amount: amount || '',
       monthly_contribution: monthly_contribution || '',
