@@ -2,69 +2,61 @@ import React,{useState} from 'react';
 
 function MarketForm({
   id,
-  market,
-  amount,
-  monthly_contribution,
-  contribution_years,
-  rate,
-  onChange
+  market
 }) {
-  const [marketForm, setMarketForm] = useState({
-    id:id,
+  console.log("market---------------------",market);
+
+  const [form, setForm] = useState({
+    id: id,
     market: market,
-    amount: amount || '',
-    monthly_contribution: monthly_contribution || '',
-    contribution_years: contribution_years || '',
-    rate: rate || ''
+    // amount: amount,
+    // monthly_contribution: monthly_contribution,
+    // contribution_years: contribution_years,
+    // rate: rate
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setMarketForm(prevForm => ({
-      ...prevForm,
-      [name]: value
-    }));
+
+  let inputNames = {
+    amount: "market_" + market + "_amount",
+    rate: "market_" + market + "_rate",
+    monthly_contribution: "market_" +market + "_monthly_contribution",
+    contribution_years: "market_" +market + "_contribution_years"
   };
 
-  // Use useEffect to sync changes from props to state, handling cases where props might change
-  React.useEffect(() => {
-    setMarketForm({
-      id:id,
-      market: market,
-      amount: amount || '',
-      monthly_contribution: monthly_contribution || '',
-      contribution_years: contribution_years || '',
-      rate: rate || ''
-    });
-  }, [market, amount, monthly_contribution, contribution_years, rate]);
-
-  // Trigger onChange in parent when state changes
-  React.useEffect(() => {
-    onChange(marketForm);
-  }, [marketForm, onChange]);
+  const onChangeHandler = (e) => {
+    let r = RegExp(/^market_(\w+)_(amount|rate|monthly_contribution|contribution_years)$/);
+    let matches = r.exec(e.target.name);
+    let formPropertyName = '';
+    if (Array.isArray(matches) && matches.length === 3 &&  typeof matches[2] === "string" ) {
+      formPropertyName = matches[2];
+      form[formPropertyName] = e.target.value;
+      setForm(form);
+    }
+    console.log("matchessssssssss1 ", form);
+  };
 
   return (
     <div>
-      <p>{marketForm.market}</p>
+      <p>{market}</p>
 
       <label>
         Investment amount:
-        <input name="amount" placeholder="Investment amount" value={marketForm.amount} onChange={handleChange} />
+        <input name={inputNames.amount} placeholder="Investment amount" onChange={onChangeHandler}/>
       </label>
 
       <label>
         Investment rate:
-        <input name="rate" placeholder="Investment rate" value={marketForm.rate} onChange={handleChange} />
+        <input name={inputNames.rate} placeholder="Investment rate" />
       </label>
 
       <label>
         Investment Monthly contribution:
-        <input name="monthly_contribution" placeholder="Monthly contribution" value={marketForm.monthly_contribution} onChange={handleChange} />
+        <input name={inputNames.monthly_contribution} placeholder="Monthly contribution" />
       </label>
 
       <label>
         Years contribution:
-        <input name="contribution_years" placeholder="Years" value={marketForm.contribution_years} onChange={handleChange} />
+        <input name={inputNames.contribution_years} placeholder="Years" />
       </label>
     </div>
   );
