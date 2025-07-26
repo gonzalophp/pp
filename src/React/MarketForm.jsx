@@ -2,7 +2,8 @@ import React,{useState} from 'react';
 
 function MarketForm({
   id,
-  market
+  market,
+  onRemove
 }) {
   console.log("market---------------------",market);
 
@@ -23,6 +24,11 @@ function MarketForm({
     contribution_years: "market_" +market + "_contribution_years"
   };
 
+  const clickOnRemove = (idToRemove) => {
+    onRemove(idToRemove);
+  };
+
+
   const onChangeHandler = (e) => {
     let r = RegExp(/^market_(\w+)_(amount|rate|monthly_contribution|contribution_years)$/);
     let matches = r.exec(e.target.name);
@@ -38,7 +44,9 @@ function MarketForm({
   return (
     <div>
       <p>{market}</p>
+      <div><input type="button" value="X" onClick={() => clickOnRemove(id)} /></div>
 
+      "
       <label>
         Investment amount:
         <input name={inputNames.amount} placeholder="Investment amount" onChange={onChangeHandler}/>

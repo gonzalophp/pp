@@ -9,13 +9,26 @@ function MarketFormList() {
   const removeForm = (idToRemove) => {
     setMarketForms(prevForms => prevForms.filter(marketForm => marketForm.id !== idToRemove));
   };
+
   const addForm = () => {
-    let input = document.querySelector('input[name="new_market"]');
-    console.log("input====================",input.value);
+    const input = document.querySelector('input[name="new_market"]');
+    const market = input.value;
+    if (market.length === 0) {
+      console.log("MARKET VACIO");
+      return;
+    }
+
+    const markets = marketFormList.map(marketForm => (marketForm.market));
+    if (markets.includes(market)) {
+      console.log("MARKET REPETIDO");
+      return; 
+    }
+    console.log("MARKET  ===============",market);
     const id = nextId.current++;
     const newForm = {
       id: id,
-      market: input.value
+      market: market,
+      onRemove: removeForm
     };
     setMarketForms(prevForms => [...prevForms, newForm]);
   };
