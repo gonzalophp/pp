@@ -95,6 +95,11 @@ form input[type=submit],form input[type=button] {
     padding: 0.5em;
 }
 
+form label {
+    display: flex;
+    justify-content: flex-end; 
+}
+
 span.color_green {
     color: rgb(30, 180, 10);
 }
@@ -106,4 +111,32 @@ span.color_red {
 div.stats ul li {
     list-style-type: none;
     font-weight: bold;
+}
+
+form div.settings div.btn-grid {
+   float: right;
+   margin: 5px;
+   padding: 0;
+   border-style: none;
+
+}
+
+button.close-btn-grid {
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 50%;
+    background-color: #007bff;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    place-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+button.close-btn-grid:hover {
+    background-color: #0056b3;
+    transform: scale(1.15);
 }

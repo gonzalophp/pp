@@ -43,10 +43,10 @@ function MarketForm({
 
   return (
     <div>
+      <div className="btn-grid">
+        <button className="close-btn-grid" onClick={() => clickOnRemove(id)}>&times;</button>
+      </div>
       <p>{market}</p>
-      <div><input type="button" value="X" onClick={() => clickOnRemove(id)} /></div>
-
-      "
       <label>
         Investment amount:
         <input name={inputNames.amount} placeholder="Investment amount" onChange={onChangeHandler}/>

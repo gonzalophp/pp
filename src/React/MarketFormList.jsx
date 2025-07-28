@@ -10,6 +10,10 @@ function MarketFormList() {
     setMarketForms(prevForms => prevForms.filter(marketForm => marketForm.id !== idToRemove));
   };
 
+  let cookie = document.cookie;
+  console.log("cookiie         " + cookie);
+  
+
   const addForm = () => {
     const input = document.querySelector('input[name="new_market"]');
     const market = input.value;
