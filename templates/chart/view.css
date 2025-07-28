@@ -7,7 +7,7 @@ div.flex-container {
 }
 
 div.flex-image {
-    display: none;
+    
 }
 
 div.flex-form, div.flex-image {
@@ -57,12 +57,28 @@ form div.settings div.add_market {
 }
 
 form div.settings div.add_market input[type="text"] {
-        width: 80%;
+    width: 80%;
 }
 
 form div.settings div.add_market input[type="button"] {
-        width: 10em;
+    width: 10em;
 }
+
+form div.settings div.market-form {
+    border: 0;
+}
+
+form div.settings div.market-form label {
+    justify-content: left;
+}
+
+form div.settings div.market-form input {
+    background-color: #007bff;
+    color: white;
+    width: fit-content;
+}
+
+
 
 div.settings span {
     height: 2em;
@@ -139,4 +155,8 @@ button.close-btn-grid {
 button.close-btn-grid:hover {
     background-color: #0056b3;
     transform: scale(1.15);
+}
+
+label > input {
+    margin-left: 1em;
 }

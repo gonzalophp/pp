@@ -1,70 +1,69 @@
-import React,{useState} from 'react';
+import React, { useState } from 'react';
+
+const FIELD_REGEX = /^market_(\w+)_(starting_amount|annual_rate|monthly_contribution|contribution_years)$/;
 
 function MarketForm({
   id,
   market,
   onRemove
 }) {
-  console.log("market---------------------",market);
-
   const [form, setForm] = useState({
     id: id,
-    market: market,
-    // amount: amount,
-    // monthly_contribution: monthly_contribution,
-    // contribution_years: contribution_years,
-    // rate: rate
+    market: market
   });
 
-
-  let inputNames = {
-    amount: "market_" + market + "_amount",
-    rate: "market_" + market + "_rate",
-    monthly_contribution: "market_" +market + "_monthly_contribution",
-    contribution_years: "market_" +market + "_contribution_years"
+  const inputNames = {
+    market: `market_${market}_market`,
+    starting_amount: `market_${market}_starting_amount`,
+    annual_rate: `market_${market}_annual_rate`,
+    monthly_contribution: `market_${market}_monthly_contribution`,
+    contribution_years: `market_${market}_contribution_years`,
   };
 
   const clickOnRemove = (idToRemove) => {
     onRemove(idToRemove);
   };
 
-
   const onChangeHandler = (e) => {
-    let r = RegExp(/^market_(\w+)_(amount|rate|monthly_contribution|contribution_years)$/);
-    let matches = r.exec(e.target.name);
+    let matches = FIELD_REGEX.exec(e.target.name);
     let formPropertyName = '';
     if (Array.isArray(matches) && matches.length === 3 &&  typeof matches[2] === "string" ) {
       formPropertyName = matches[2];
       form[formPropertyName] = e.target.value;
       setForm(form);
     }
-    console.log("matchessssssssss1 ", form);
   };
 
   return (
     <div>
       <div className="btn-grid">
-        <button className="close-btn-grid" onClick={() => clickOnRemove(id)}>&times;</button>
+        <button type="button" className="close-btn-grid" onClick={() => clickOnRemove(id)}>&times;</button>
       </div>
-      <p>{market}</p>
+      <div className="market-form">
+        <label>
+          Market:
+          <input name={inputNames.market} value={form.market} readOnly />
+        </label>
+      </div>
+
       <label>
-        Investment amount:
-        <input name={inputNames.amount} placeholder="Investment amount" onChange={onChangeHandler}/>
+        Starting amount:
+        <input name={inputNames.starting_amount} value={form.starting_amount} placeholder="Starting amount" onChange={onChangeHandler} />
       </label>
 
       <label>
-        Investment rate:
-        <input name={inputNames.rate} placeholder="Investment rate" />
+        Average annual rate:
+        <input name={inputNames.annual_rate} value={form.annual_rate} placeholder="Annual rate %" onChange={onChangeHandler} />
       </label>
 
       <label>
-        Investment Monthly contribution:
-        <input name={inputNames.monthly_contribution} placeholder="Monthly contribution" />
+        Monthly contribution:
+        <input name={inputNames.monthly_contribution} value={form.monthly_contribution} placeholder="Monthly contribution" onChange={onChangeHandler} />
       </label>
 
       <label>
-        Years contribution:
-        <input name={inputNames.contribution_years} placeholder="Years" />
+        Years of monthly contribution:
+        <input name={inputNames.contribution_years} value={form.contribution_years} placeholder="Years" onChange={onChangeHandler} />
       </label>
     </div>
   );
