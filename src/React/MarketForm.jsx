@@ -7,6 +7,7 @@ function MarketForm({
   market,
   onRemove
 }) {
+  const availableMarkets = ["market1","market2","market3"];
   const [form, setForm] = useState({
     id: id,
     market: market
@@ -18,6 +19,7 @@ function MarketForm({
     annual_rate: `market_${market}_annual_rate`,
     monthly_contribution: `market_${market}_monthly_contribution`,
     contribution_years: `market_${market}_contribution_years`,
+    market_source_rates: `market_${market}_source_rates`,
   };
 
   const clickOnRemove = (idToRemove) => {
@@ -54,6 +56,17 @@ function MarketForm({
       <label>
         Average annual rate:
         <input name={inputNames.annual_rate} value={form.annual_rate} placeholder="Annual rate %" onChange={onChangeHandler} />
+      </label>
+
+      <label>
+        Market source rates:
+        <select name={inputNames.market_source_rates} value={form.source_rates} onChange={onChangeHandler}>
+          {
+            availableMarkets.map(marketName => (
+              <option value={marketName}>{marketName}</option>
+            ))
+          }
+        </select>
       </label>
 
       <label>

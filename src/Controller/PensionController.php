@@ -45,6 +45,7 @@ class PensionController extends AbstractController
         );
 
         $csvFiles = iterator_to_array($csvFiles);
+        $formData["available_markets"] = $csvFiles;
 
         $markets = ['investment', 'pension'];
         foreach ($markets as $market) {
@@ -99,8 +100,26 @@ class PensionController extends AbstractController
             $formData['stats_rate'] = $interestRate;
             $formData['stats_probability_success'] = $statsProbabilitySuccess;
         }
+
+
         
         return $formData;
+    }
+    
+    private function getMarketsParameters(): array
+    {
+        $markets = ['investment', 'pension'];
+        foreach ($markets as $market) {
+            $options = [];
+            foreach ($csvFiles as $csvFile) {
+                $selected = (isset($formData["market_{$market}_rate"]) && ($formData["market_{$market}_rate"] == $csvFile));
+                $options[] = [
+                    'name' => $csvFile, 
+                    'selected' => $selected
+                ];
+            }
+            $formData["market_{$market}_rate_options"] = $options;
+        }
     }
 
     private function getMarketGrowthRepositories(array $markets, array $formData): array {
@@ -231,6 +250,7 @@ class PensionController extends AbstractController
             $formData = $cookiePensionPost->getData() ?? $initializedFormData;
         } else {
             $formData = array_merge($initializedFormData, $_POST);
+            $formData['saved_markets'] = '[{"market_id": 2, "market_name":"NAME"},{"market_id": 777}]';
             $cookiePensionPost->store($formData, time() + self::COOKIE_EXPIRE);
         }
 
