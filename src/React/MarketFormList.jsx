@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-
+import AddMarketForm from './AddMarketForm.jsx';
 import MarketForm from './MarketForm.jsx';
 
 function MarketFormList() {
@@ -7,7 +7,7 @@ function MarketFormList() {
   const [availableMarkets, setAvailableMarkets] = useState([]);
   const nextId = useRef(0);
   const newMarketSelectRef = useRef(null);
-  const [newMarket, setNewMarket] = useState('');
+  
 
 
   const removeForm = (idToRemove) => {
@@ -38,7 +38,8 @@ function MarketFormList() {
     if (availableMarketsMeta) {
       try {
         const markets = JSON.parse(availableMarketsMeta.dataset.available_markets);
-        setAvailableMarkets(markets);
+        console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC" + JSON.stringify(markets));
+        setAvailableMarkets(markets);        
       } catch (e) {
         console.error("Could not parse available markets: ", e);
       }
@@ -47,14 +48,18 @@ function MarketFormList() {
     }
   }, []); // Empty dependency array ensures this runs only once on mount.
 
-  const addForm = () => {
-    if (newMarket.length === 0) {
+  
+  console.log("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" + JSON.stringify(marketFormList));
+
+  const addForm = (newMarketName) => {
+    console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB " + newMarketName);
+    if (!newMarketName || newMarketName.length === 0) {
       console.log("MARKET VACIO");
       return;
     }
 
     const markets = marketFormList.map(marketForm => (marketForm.market));
-    if (markets.includes(newMarket)) {
+    if (markets.includes(newMarketName)) {
       console.log("MARKET REPETIDO");
       return; 
     }
@@ -62,19 +67,16 @@ function MarketFormList() {
     const id = nextId.current++;
     const newForm = {
       id: id,
-      market: newMarket,
+      market: newMarketName,
       onRemove: removeForm
     };
     setMarketForms(prevForms => [...prevForms, newForm]);
   };
 
+  console.log("AAAAAAAAAAAAAAAAAAAAA" + JSON.stringify(marketFormList));
   return (
     <div>
-      <div id="add_market" className="add_market">
-        <input name="new_market" type="text" placeholder="Market Name" onChange={(e) => setNewMarket(e.target.value)} />
-        <input type="button" value="Add Market" onClick={addForm()} />
-      </div>
-
+      <AddMarketForm handleButtonOnClick={addForm}/>
       {marketFormList.map(marketForm => (
         <MarketForm
           key={marketForm.id}

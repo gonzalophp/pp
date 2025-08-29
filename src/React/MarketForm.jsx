@@ -9,6 +9,7 @@ function MarketForm({
 }) {
   const availableMarkets = ["market1","market2","market3"];
   const [form, setForm] = useState({
+    key: id,
     id: id,
     market: market
   });

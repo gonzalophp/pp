@@ -3,14 +3,14 @@ import React from 'react';
 import ReactDOM from 'react-dom/client'; // For React 18+
 import MarketFormList from './MarketFormList.jsx';
 
-const containerAddMarket = document.getElementById('react_add_market');
-if (containerAddMarket) {
-  const rootContainerAddMarket = ReactDOM.createRoot(containerAddMarket);
-  rootContainerAddMarket.render(
+const containerMarkets = document.getElementById('react_markets');
+if (containerMarkets) {
+  const rootContainerMarkets = ReactDOM.createRoot(containerMarkets);
+  rootContainerMarkets.render(
     <React.StrictMode>
       <MarketFormList />
     </React.StrictMode>
   );
 } else {
-  console.warn('The HTML element with ID "react_add_market" was not found. React component cannot be mounted.');
+  console.warn('The HTML element with ID "react_markets" was not found. React component cannot be mounted.');
 }
