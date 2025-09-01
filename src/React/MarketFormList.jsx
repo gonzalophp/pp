@@ -7,6 +7,9 @@ function MarketFormList() {
   const [availableMarkets, setAvailableMarkets] = useState([]);
   const nextId = useRef(0);
   const newMarketSelectRef = useRef(null);
+
+  
+  
   
 
 
@@ -46,7 +49,20 @@ function MarketFormList() {
     } else {
       console.warn('Meta tag with id "available_markets" not found.');
     }
-  }, []); // Empty dependency array ensures this runs only once on mount.
+
+
+    const newForm = {
+      id: 21,
+        key: 21,
+        market: "Default Market",
+        amount: 10000,
+        monthly_contribution: 500,
+        contribution_years: 10,
+        rate: 5
+    };    
+    setMarketForms([newForm]);
+
+  }, []);
 
   
   console.log("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" + JSON.stringify(marketFormList));
@@ -72,6 +88,9 @@ function MarketFormList() {
     };
     setMarketForms(prevForms => [...prevForms, newForm]);
   };
+
+  
+  
 
   console.log("AAAAAAAAAAAAAAAAAAAAA" + JSON.stringify(marketFormList));
   return (

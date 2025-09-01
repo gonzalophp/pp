@@ -5,13 +5,24 @@ const FIELD_REGEX = /^market_(\w+)_(starting_amount|annual_rate|monthly_contribu
 function MarketForm({
   id,
   market,
+  amount,
+  monthly_contribution,
+  contribution_years,
+  rate,
+  source_rates, 
   onRemove
 }) {
   const availableMarkets = ["market1","market2","market3"];
   const [form, setForm] = useState({
     key: id,
     id: id,
-    market: market
+    market: market,
+    starting_amount: amount,
+    monthly_contribution: monthly_contribution,
+    contribution_years: contribution_years,
+    annual_rate: rate,
+    source_rates: source_rates,
+    
   });
 
   const inputNames = {
