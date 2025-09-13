@@ -251,9 +251,45 @@ class PensionController extends AbstractController
         } else {
             $formData = array_merge($initializedFormData, $_POST);
             $formData['saved_markets'] = '[{"market_id": 2, "market_name":"NAME"},{"market_id": 777}]';
+            $formData['marketFormList'] = $this->getMarketFormList($_POST);
             $cookiePensionPost->store($formData, time() + self::COOKIE_EXPIRE);
         }
 
         return $formData;
+    }
+
+    private function getMarketFormList(array $data): array
+    {
+        $marketFormList = [];
+        foreach ($data as $key => $value) {
+            if (str_starts_with($key, 'market_')) {
+                $marketFound = preg_match(
+                    '/market_(\w+)_(\w+)/', 
+                $key, 
+                $matches
+                );
+                if (!$marketFound) {
+                    throw new \Exception("Unexpected POST key {$key}");
+                }
+                if (!array_key_exists($matches[1], $marketFormList)) {
+                    $marketFormList[$matches[1]] = [];
+                }
+                var_export([
+                    $marketFormList, 
+                    $matches,
+                    $value
+                ]);
+                $marketFormList[$matches[1]][$matches[2]] = $value;
+
+                var_export($marketFormList);
+                echo "\n\n\n";
+             
+            }
+        }
+        exit;
+
+        var_export($marketFormList);
+
+        return $marketFormList;
     }
 }

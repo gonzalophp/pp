@@ -1,6 +1,7 @@
 import React, {useState, useRef, useEffect} from 'react';
 import AddMarketForm from './AddMarketForm.jsx';
 import MarketForm from './MarketForm.jsx';
+import MarketFormList2Array from './Helper/MarketFormList2Array.jsx'; 
 
 function MarketFormList() {
   const [marketFormList, setMarketForms] = useState([]);
@@ -9,7 +10,8 @@ function MarketFormList() {
   const newMarketSelectRef = useRef(null);
 
   
-  
+  let a = MarketFormList2Array();
+  console.log("eeEEEEEEEEEEEEEEEEEEE" + a);
   
 
 
