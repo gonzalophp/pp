@@ -9,7 +9,7 @@ use App\Entity\Cookie;
 use App\Service\Chart;
 use App\Service\PriceGenerator;
 use App\Repository\MarketGrowthRate\Adapter\AdapterFactory;
-use App\Repository\MarketGrowthRateRepository;
+use App\Repository\MarketGrowthRate\MarketGrowthRateRepository;
 
 class PensionController extends AbstractController
 {
@@ -106,21 +106,21 @@ class PensionController extends AbstractController
         return $formData;
     }
     
-    private function getMarketsParameters(): array
-    {
-        $markets = ['investment', 'pension'];
-        foreach ($markets as $market) {
-            $options = [];
-            foreach ($csvFiles as $csvFile) {
-                $selected = (isset($formData["market_{$market}_rate"]) && ($formData["market_{$market}_rate"] == $csvFile));
-                $options[] = [
-                    'name' => $csvFile, 
-                    'selected' => $selected
-                ];
-            }
-            $formData["market_{$market}_rate_options"] = $options;
-        }
-    }
+    // private function getMarketsParameters(): array
+    // {
+    //     $markets = ['investment', 'pension'];
+    //     foreach ($markets as $market) {
+    //         $options = [];
+    //         foreach ($csvFiles as $csvFile) {
+    //             $selected = (isset($formData["market_{$market}_rate"]) && ($formData["market_{$market}_rate"] == $csvFile));
+    //             $options[] = [
+    //                 'name' => $csvFile, 
+    //                 'selected' => $selected
+    //             ];
+    //         }
+    //         $formData["market_{$market}_rate_options"] = $options;
+    //     }
+    // }
 
     private function getMarketGrowthRepositories(array $markets, array $formData): array {
         $marketGrowthRatesRepositories = [];
@@ -274,21 +274,21 @@ class PensionController extends AbstractController
                 if (!array_key_exists($matches[1], $marketFormList)) {
                     $marketFormList[$matches[1]] = [];
                 }
-                var_export([
-                    $marketFormList, 
-                    $matches,
-                    $value
-                ]);
+                // var_export([
+                //     $marketFormList, 
+                //     $matches,
+                //     $value
+                // ]);
                 $marketFormList[$matches[1]][$matches[2]] = $value;
 
-                var_export($marketFormList);
-                echo "\n\n\n";
+                // var_export($marketFormList);
+                // echo "\n\n\n";
              
             }
         }
-        exit;
+        // exit;
 
-        var_export($marketFormList);
+        // var_export($marketFormList);
 
         return $marketFormList;
     }

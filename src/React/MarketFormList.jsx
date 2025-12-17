@@ -53,7 +53,7 @@ function MarketFormList() {
     }
 
 
-    const newForm = {
+    const newForms = [{
       id: 21,
         key: 21,
         market: "Default Market",
@@ -61,8 +61,17 @@ function MarketFormList() {
         monthly_contribution: 500,
         contribution_years: 10,
         rate: 5
-    };    
-    setMarketForms([newForm]);
+    },
+  {
+      id: 21,
+        key: 21,
+        market: "Default Market2",
+        amount: 20000,
+        monthly_contribution: 600,
+        contribution_years: 8,
+        rate: 5
+    }];    
+    setMarketForms(newForms);
 
   }, []);
 

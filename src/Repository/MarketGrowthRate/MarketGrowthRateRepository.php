@@ -1,5 +1,5 @@
 <?php
-namespace App\Repository;
+namespace App\Repository\MarketGrowthRate;
 
 use App\Repository\MarketGrowthRate\Adapter\MarketRateGrowthAdapterInterface;
 

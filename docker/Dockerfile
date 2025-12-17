@@ -1,4 +1,4 @@
-FROM php:8.4-apache-bookworm 
+FROM php:8.5-apache-trixie
 
 RUN apt-get update
 RUN apt-get -y install zip git zlib1g-dev libpng-dev rsync acl
