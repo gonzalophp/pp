@@ -4,7 +4,7 @@ const FIELD_REGEX = /^market_(\w+)_(starting_amount|annual_rate|monthly_contribu
 
 function MarketForm({
   id,
-  market,
+  market: market_name,
   amount,
   monthly_contribution,
   contribution_years,
@@ -16,7 +16,7 @@ function MarketForm({
   const [form, setForm] = useState({
     key: id,
     id: id,
-    market: market,
+    market_name: market_name,
     starting_amount: amount,
     monthly_contribution: monthly_contribution,
     contribution_years: contribution_years,
@@ -26,12 +26,12 @@ function MarketForm({
   });
 
   const inputNames = {
-    market: `market_${market}_market`,
-    starting_amount: `market_${market}_starting_amount`,
-    annual_rate: `market_${market}_annual_rate`,
-    monthly_contribution: `market_${market}_monthly_contribution`,
-    contribution_years: `market_${market}_contribution_years`,
-    market_source_rates: `market_${market}_source_rates`,
+    market_name: `market_${market_name}_market`,
+    starting_amount: `market_${market_name}_starting_amount`,
+    annual_rate: `market_${market_name}_annual_rate`,
+    monthly_contribution: `market_${market_name}_monthly_contribution`,
+    contribution_years: `market_${market_name}_contribution_years`,
+    market_source_rates: `market_${market_name}_source_rates`,
   };
 
   const clickOnRemove = (idToRemove) => {
@@ -55,8 +55,8 @@ function MarketForm({
       </div>
       <div className="market-form">
         <label>
-          Market:
-          <input name={inputNames.market} value={form.market} readOnly />
+          Market name:
+          <input name={inputNames.market_name} value={form.market_name} readOnly />
         </label>
       </div>
 
@@ -66,7 +66,7 @@ function MarketForm({
       </label>
 
       <label>
-        Average annual rate:
+        Fixed annual rate:
         <input name={inputNames.annual_rate} value={form.annual_rate} placeholder="Annual rate %" onChange={onChangeHandler} />
       </label>
 
@@ -75,19 +75,24 @@ function MarketForm({
         <select name={inputNames.market_source_rates} value={form.source_rates} onChange={onChangeHandler}>
           {
             availableMarkets.map(marketName => (
-              <option value={marketName}>{marketName}</option>
+              <option key={marketName} value={marketName}>{marketName}</option>
             ))
           }
         </select>
       </label>
 
       <label>
-        Monthly contribution:
+        Monthly amount:
         <input name={inputNames.monthly_contribution} value={form.monthly_contribution} placeholder="Monthly contribution" onChange={onChangeHandler} />
       </label>
 
       <label>
-        Years of monthly contribution:
+        Year start:
+        <input name={inputNames.contribution_years} value={form.contribution_years} placeholder="Years" onChange={onChangeHandler} />
+      </label>
+
+      <label>
+        Year end:
         <input name={inputNames.contribution_years} value={form.contribution_years} placeholder="Years" onChange={onChangeHandler} />
       </label>
     </div>
